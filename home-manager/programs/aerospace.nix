@@ -49,6 +49,7 @@ in
 
       # Toggle fullscreen (matching your alt+shift-0 setup)
       alt-shift-0 = 'fullscreen'
+      ctrl-alt-cmd-shift-f = 'fullscreen'
 
       # Workspace navigation by numbers (matching your numbered spaces)
       alt-1 = 'workspace social'

@@ -47,6 +47,7 @@
       nnn
       fzf
       fd
+      ripgrep
 
       # ui tools
       # skhd
@@ -256,6 +257,7 @@
       "typescript"
       "prettier"
       "eslint"
+      "n"
     )
 
     for package in "''${NPM_PACKAGES[@]}"; do
