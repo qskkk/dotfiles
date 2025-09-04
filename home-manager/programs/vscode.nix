@@ -257,7 +257,10 @@
         "editor.formatOnSave" = true;
         "editor.codeActionsOnSave" = {
           "source.fixAll" = "explicit";
+          "source.fixAll.eslint" = "explicit";
         };
+        "editor.defaultFormatter" = "esbenp.prettier-vscode";
+
         "editor.cursorSmoothCaretAnimation" = "on";
 
         # use Cmd+clic for "Go to Definition"
@@ -308,23 +311,23 @@
         ];
         "eslint.run" = "onSave";
 
-        "[javascript]" = {
-          "editor.defaultFormatter" = "dbaeumer.vscode-eslint";
-        };
-        "[typescriptreact]" = {
-          "editor.defaultFormatter" = "dbaeumer.vscode-eslint";
-        };
         "[jsonc]" = {
           "editor.defaultFormatter" = "esbenp.prettier-vscode";
-        };
-        "[typescript]" = {
-          "editor.defaultFormatter" = "dbaeumer.vscode-eslint";
         };
         "[vue]" = {
           "editor.defaultFormatter" = "esbenp.prettier-vscode";
         };
         "[json]" = {
           "editor.defaultFormatter" = "esbenp.prettier-vscode";
+        };
+
+        # Configuration Go
+        "[go]" = {
+          "editor.defaultFormatter" = "golang.go";
+          "editor.formatOnSave" = true;
+          "editor.codeActionsOnSave" = {
+            "source.organizeImports" = true;
+          };
         };
 
         "go.formatTool" = "gofmt";
