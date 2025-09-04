@@ -118,13 +118,13 @@
     ];
 
     sessionPath = [
-      "$HOME/.npm-global/bin"
       "$HOME/go/bin"
+      "/usr/local/bin"
+      "$HOME/.npm-global/bin"
       "$HOME/.yarn/bin"
       "$HOME/.config/yarn/global/node_modules/.bin"
       "$HOME/dev/flutter/bin"
       "$HOME/.pub-cache/bin"
-      "/usr/local/bin/node"
       "/opt/homebrew/bin"
       "/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
       "/Applications/GoLand.app/Contents/MacOS"
