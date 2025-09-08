@@ -139,6 +139,8 @@
             function pr() {
               open https://github.com/${secrets.githubOrg or "example"}/$(basename "$PWD")/pull/$(git branch --show-current);
             }
+
+            tb
     '';
   };
 

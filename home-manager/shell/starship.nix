@@ -174,12 +174,6 @@ in
         format = "via $symbol[$ram( | $swap)]($style) ";
       };
 
-      # Load
-      load = {
-        disabled = false;
-        format = "load [$load1 $load5 $load15]($style) ";
-        style = "#${palette.base03}";
-      };
     };
   };
 }
