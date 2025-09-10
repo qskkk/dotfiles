@@ -78,6 +78,7 @@
 
       # CLI tools for scripts
       gum
+      glow
       awscli2
       git-fleet.packages.aarch64-darwin.default
       newman
