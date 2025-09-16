@@ -12,6 +12,10 @@
   ...
 }:
 
+let
+  customPkgs = import (nixPath + "/pkgs") { inherit pkgs; };
+in
+
 {
   # Import modules
   imports = [
@@ -84,11 +88,10 @@
       newman
 
       # GO tools
+      customPkgs.go-1_25  # Go 1.25 from source
       golangci-lint
       gopls
-      go
       graphviz
-      gopls
 
       #softs
       # orca-slicer

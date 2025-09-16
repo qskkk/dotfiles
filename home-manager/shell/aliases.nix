@@ -179,6 +179,7 @@
     ''
       dlog () { docker logs -f $1; }
       kbash () { kubectl exec -it $1 bash; }
+      dbash () { docker exec -it $1 bash; }
       dsh () { docker exec -it $1 sh; }
       ksh () { kubectl exec -it $1 sh; }
       goto () { cd ${workspace}/$1 ;}
