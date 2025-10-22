@@ -2,11 +2,11 @@
 
 stdenv.mkDerivation rec {
   pname = "go";
-  version = "1.25.1";
+  version = "1.25.3";
 
   src = fetchurl {
     url = "https://dl.google.com/go/go${version}.src.tar.gz";
-    hash = "sha256-0BDBCc7pTYDv5oHqtGvepJGskGv0ZYPDLp8NuwvRpZQ=";
+    hash = "sha256-qBpLpZPQAV4QxR4mfeP/B8eskU38oDfZUX0ClRcJd5U=";
   };
 
   nativeBuildInputs = [ go_1_24 ];

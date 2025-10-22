@@ -28,19 +28,21 @@
       ...
     }:
     let
-      system = "aarch64-darwin";
+      darwinSystem = "aarch64-darwin";
+      linuxSystem = "x86_64-linux";
 
-      nixPath = "/Users/qskkk/workspace/perso/dotfiles";
+      nixPathDarwin = "/Users/qskkk/workspace/perso/dotfiles";
+      nixPathLinux = "/home/qskkk/workspace/perso/dotfiles";
 
-      secrets = import (nixPath + "/secrets.nix");
+      secrets = import (nixPathDarwin + "/secrets.nix");
 
       username = secrets.username;
 
     in
     {
-      # Use machine name from secrets
+      # Darwin configuration
       darwinConfigurations."${secrets.machineName}" = darwin.lib.darwinSystem {
-        inherit system;
+        system = darwinSystem;
 
         specialArgs = {
           inherit
@@ -48,9 +50,9 @@
             nixvim
             username
             secrets
-            nixPath
             git-fleet
             ;
+          nixPath = nixPathDarwin;
         };
 
         modules = [
@@ -64,6 +66,36 @@
           )
           ./darwin-configuration.nix
           home-manager.darwinModules.home-manager
+          nix-colors.homeManagerModule
+        ];
+      };
+
+      # NixOS configuration
+      nixosConfigurations."${secrets.nixosMachineName or "nixos"}" = nixpkgs.lib.nixosSystem {
+        system = linuxSystem;
+
+        specialArgs = {
+          inherit
+            nix-colors
+            nixvim
+            username
+            secrets
+            git-fleet
+            ;
+          nixPath = nixPathLinux;
+        };
+
+        modules = [
+          (
+            { pkgs, ... }:
+            {
+              environment.systemPackages = [
+                git-fleet.packages.x86_64-linux.default
+              ];
+            }
+          )
+          ./nixos-configuration.nix
+          home-manager.nixosModules.home-manager
           nix-colors.homeManagerModule
         ];
       };

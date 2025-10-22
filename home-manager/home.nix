@@ -32,7 +32,7 @@ in
   # Home Manager configuration
   home = {
     username = username;
-    homeDirectory = "/Users/${username}";
+    homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
     stateVersion = "23.11";
 
     # Create npm global directory structure
@@ -50,19 +50,26 @@ in
       ranger
       nnn
       fzf
-      fd
-      ripgrep
+      fd # A simple, fast and user-friendly alternative to 'find'
+      yazi # Yet Another Zsh Interface
+      bat # A cat clone with wings
+      ripgrep # A line-oriented search tool that recursively searches your current directory for a regex pattern
+      neovim
+      lazygit
+      lazydocker
 
-      # ui tools
-      # skhd
-      # yabai
+      # CLI tools for scripts
+      gum
+      glow
+      awscli2
+      newman
+      redis
+
+    ] ++ lib.optionals pkgs.stdenv.isDarwin [
       aerospace
       sketchybar
       karabiner-elements
-
-      # Text editors
-      neovim
-
+    ] ++ (with pkgs; [
       # Networking
       openssh
 
@@ -79,13 +86,11 @@ in
       hyperfine # Window management dependencies
       jq
       jankyborders
-
-      # CLI tools for scripts
-      gum
-      glow
-      awscli2
+    ]) ++ lib.optionals pkgs.stdenv.isDarwin [
       git-fleet.packages.aarch64-darwin.default
-      newman
+    ] ++ lib.optionals pkgs.stdenv.isLinux [
+      git-fleet.packages.x86_64-linux.default
+    ] ++ (with pkgs; [
 
       # GO tools
       customPkgs.go-1_25  # Go 1.25 from source
@@ -119,16 +124,17 @@ in
         mkdir -p "$GOPATH/bin"
         go install github.com/japhy-team/ruben@main
       '')
-    ];
+    ]);
 
     sessionPath = [
       "$HOME/go/bin"
-      "/usr/local/bin"
       "$HOME/.npm-global/bin"
       "$HOME/.yarn/bin"
       "$HOME/.config/yarn/global/node_modules/.bin"
       "$HOME/dev/flutter/bin"
       "$HOME/.pub-cache/bin"
+    ] ++ lib.optionals pkgs.stdenv.isDarwin [
+      "/usr/local/bin"
       "/opt/homebrew/bin"
       "/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
       "/Applications/GoLand.app/Contents/MacOS"
@@ -137,8 +143,8 @@ in
     # Environment variables
     sessionVariables = {
       EDITOR = "nvim";
-      BROWSER = "arc";
-      TERMINAL = "kitty";
+      BROWSER = if pkgs.stdenv.isDarwin then "arc" else "firefox";
+      TERMINAL = if pkgs.stdenv.isDarwin then "kitty" else "alacritty";
       GOPATH = "$HOME/go";
       GOBIN = "$HOME/go/bin";
       NPM_CONFIG_PREFIX = "$HOME/.npm-global";
@@ -151,9 +157,9 @@ in
   # XDG directories
   xdg = {
     enable = true;
-    configHome = "/Users/${username}/.config";
-    dataHome = "/Users/${username}/.local/share";
-    cacheHome = "/Users/${username}/.cache";
+    configHome = if pkgs.stdenv.isDarwin then "/Users/${username}/.config" else "/home/${username}/.config";
+    dataHome = if pkgs.stdenv.isDarwin then "/Users/${username}/.local/share" else "/home/${username}/.local/share";
+    cacheHome = if pkgs.stdenv.isDarwin then "/Users/${username}/.cache" else "/home/${username}/.cache";
   };
 
   # Direnv integration
@@ -163,94 +169,96 @@ in
     nix-direnv.enable = true;
   };
 
-  # Activation script to restart SketchyBar after rebuild
-  home.activation.restartSketchyBar = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    echo "Restarting SketchyBar..."
+  # macOS-specific activation scripts
+  home.activation = lib.mkIf pkgs.stdenv.isDarwin {
+    # Activation script to restart SketchyBar after rebuild
+    restartSketchyBar = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      echo "Restarting SketchyBar..."
 
-    # Use the full path to sketchybar from nixpkgs
-    if [ -x "${pkgs.sketchybar}/bin/sketchybar" ]; then
-      $DRY_RUN_CMD ${pkgs.sketchybar}/bin/sketchybar --reload &
-      echo "SketchyBar reload command sent"
-    else
-      echo "SketchyBar not found at ${pkgs.sketchybar}/bin/sketchybar"
-    fi
-  '';
-
-  # Activation script to reload Karabiner-Elements configuration
-  home.activation.reloadKarabiner = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    echo "Reloading Karabiner-Elements configuration..."
-
-    # Check if Karabiner-Elements is installed
-    if [ -d "/Applications/Karabiner-Elements.app" ]; then
-      # Launch Karabiner-Elements if not running
-      if ! pgrep -f "Karabiner-Elements" >/dev/null 2>&1; then
-        echo "Starting Karabiner-Elements..."
-        $DRY_RUN_CMD open -a "Karabiner-Elements" 2>/dev/null || true
-        sleep 2
+      # Use the full path to sketchybar from nixpkgs
+      if [ -x "${pkgs.sketchybar}/bin/sketchybar" ]; then
+        $DRY_RUN_CMD ${pkgs.sketchybar}/bin/sketchybar --reload &
+        echo "SketchyBar reload command sent"
+      else
+        echo "SketchyBar not found at ${pkgs.sketchybar}/bin/sketchybar"
       fi
-      
-      # Use the correct CLI path
-      if [ -x "/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli" ]; then
-        echo "Selecting Default profile to reload configuration..."
-        $DRY_RUN_CMD "/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli" --select-profile "Default profile" 2>/dev/null || true
+    '';
+
+    # Activation script to reload Karabiner-Elements configuration
+    reloadKarabiner = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      echo "Reloading Karabiner-Elements configuration..."
+
+      # Check if Karabiner-Elements is installed
+      if [ -d "/Applications/Karabiner-Elements.app" ]; then
+        # Launch Karabiner-Elements if not running
+        if ! pgrep -f "Karabiner-Elements" >/dev/null 2>&1; then
+          echo "Starting Karabiner-Elements..."
+          $DRY_RUN_CMD open -a "Karabiner-Elements" 2>/dev/null || true
+          sleep 2
+        fi
+
+        # Use the correct CLI path
+        if [ -x "/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli" ]; then
+          echo "Selecting Default profile to reload configuration..."
+          $DRY_RUN_CMD "/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli" --select-profile "Default profile" 2>/dev/null || true
+        fi
+
+        # Show notification about permissions if needed
+        $DRY_RUN_CMD osascript -e 'display notification "Karabiner-Elements may need Accessibility permissions. Check System Settings > Privacy & Security > Accessibility" with title "Karabiner Configuration"' 2>/dev/null || true
+
+        echo "Karabiner-Elements configuration reloaded"
+      else
+        echo "Karabiner-Elements not found in /Applications/"
+        echo "Please install Karabiner-Elements manually or via Homebrew: brew install --cask karabiner-elements"
       fi
-      
-      # Show notification about permissions if needed
-      $DRY_RUN_CMD osascript -e 'display notification "Karabiner-Elements may need Accessibility permissions. Check System Settings > Privacy & Security > Accessibility" with title "Karabiner Configuration"' 2>/dev/null || true
-      
-      echo "Karabiner-Elements configuration reloaded"
-    else
-      echo "Karabiner-Elements not found in /Applications/"
-      echo "Please install Karabiner-Elements manually or via Homebrew: brew install --cask karabiner-elements"
-    fi
-  '';
+    '';
 
-  home.activation.setWallpaper = lib.hm.dag.entryAfter [ "setupLaunchAgents" ] ''
-    WALLPAPER_PATH="${nixPath}/${secrets.wallpaperPath}"
+    setWallpaper = lib.hm.dag.entryAfter [ "setupLaunchAgents" ] ''
+      WALLPAPER_PATH="${nixPath}/${secrets.wallpaperPath}"
 
-    if [ -f "$WALLPAPER_PATH" ]; then
-      echo "Setting wallpaper to: $WALLPAPER_PATH"
+      if [ -f "$WALLPAPER_PATH" ]; then
+        echo "Setting wallpaper to: $WALLPAPER_PATH"
 
-      # Use osascript to set the wallpaper for all desktops
-      /usr/bin/osascript -e "
-        tell application \"System Events\"
-          tell every desktop
-            set picture to POSIX file \"$WALLPAPER_PATH\"
+        # Use osascript to set the wallpaper for all desktops
+        /usr/bin/osascript -e "
+          tell application \"System Events\"
+            tell every desktop
+              set picture to POSIX file \"$WALLPAPER_PATH\"
+            end tell
           end tell
-        end tell
-      " 2>/dev/null || true
+        " 2>/dev/null || true
 
-      echo "Wallpaper set successfully"
-    else
-      echo "Warning: Wallpaper file not found at $WALLPAPER_PATH"
-    fi
-  '';
+        echo "Wallpaper set successfully"
+      else
+        echo "Warning: Wallpaper file not found at $WALLPAPER_PATH"
+      fi
+    '';
 
-  # Activation script to refresh Warp theme after rebuild
-  home.activation.refreshWarpTheme = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    echo "Refreshing Warp theme..."
+    # Activation script to refresh Warp theme after rebuild
+    refreshWarpTheme = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      echo "Refreshing Warp theme..."
 
-    if [ -x "$HOME/.scripts/refresh-warp-theme.sh" ]; then
-      $DRY_RUN_CMD "$HOME/.scripts/refresh-warp-theme.sh" &
-      echo "Warp theme refresh script executed"
-    else
-      echo "Warp theme refresh script not found"
-    fi
-  '';
+      if [ -x "$HOME/.scripts/refresh-warp-theme.sh" ]; then
+        $DRY_RUN_CMD "$HOME/.scripts/refresh-warp-theme.sh" &
+        echo "Warp theme refresh script executed"
+      else
+        echo "Warp theme refresh script not found"
+      fi
+    '';
 
-  home.activation.reloadAerospace = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    echo "Reloading Aerospace configuration..."
+    reloadAerospace = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      echo "Reloading Aerospace configuration..."
 
-    if [ -x "${pkgs.aerospace}/Applications/AeroSpace.app/Contents/MacOS/AeroSpace" ]; then
-      $DRY_RUN_CMD "${pkgs.aerospace}/Applications/AeroSpace.app/Contents/MacOS/AeroSpace" --reload &
-      echo "Aerospace reload command sent"
-    else
-      echo "Aerospace not found at ${pkgs.aerospace}/Applications/AeroSpace.app/Contents/MacOS/AeroSpace"
-    fi
-  '';
+      if [ -x "${pkgs.aerospace}/Applications/AeroSpace.app/Contents/MacOS/AeroSpace" ]; then
+        $DRY_RUN_CMD "${pkgs.aerospace}/Applications/AeroSpace.app/Contents/MacOS/AeroSpace" --reload &
+        echo "Aerospace reload command sent"
+      else
+        echo "Aerospace not found at ${pkgs.aerospace}/Applications/AeroSpace.app/Contents/MacOS/AeroSpace"
+      fi
+    '';
 
-  # Activation script to install npm packages automatically
-  home.activation.installNpmPackages = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    # Activation script to install npm packages automatically
+    installNpmPackages = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       echo "Installing npm packages..."
 
     export NPM_CONFIG_PREFIX="$HOME/.npm-global"
@@ -273,6 +281,7 @@ in
       fi
     done
   '';
+  };
 
   # Activation script to change wallpaper on all desktops/workspaces
   # home.activation.setWallpaper = lib.hm.dag.entryAfter [ "setupLaunchAgents" ] ''
