@@ -94,6 +94,7 @@ in
 
       # GO tools
       customPkgs.go-1_25  # Go 1.25 from source
+      customPkgs.tuios    # TUI for managing iOS devices
       golangci-lint
       gopls
       graphviz
@@ -117,13 +118,6 @@ in
 
       # node pagkages
       nodePackages.npm
-
-      (writeShellScriptBin "install-ruben" ''
-        export GOPATH="$HOME/go"
-        export GOBIN="$HOME/go/bin"
-        mkdir -p "$GOPATH/bin"
-        go install github.com/japhy-team/ruben@main
-      '')
     ]);
 
     sessionPath = [
