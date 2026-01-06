@@ -23,7 +23,7 @@ in
     ./shell
     ./git.nix
     nix-colors.homeManagerModules.default
-    nixvim.homeManagerModules.nixvim
+    # nixvim.homeManagerModules.nixvim  # Removed - switching to Helix
   ];
 
   # Configure color scheme
@@ -54,7 +54,7 @@ in
       yazi # Yet Another Zsh Interface
       bat # A cat clone with wings
       ripgrep # A line-oriented search tool that recursively searches your current directory for a regex pattern
-      neovim
+      helix # Modern modal text editor
       lazygit
       lazydocker
 
@@ -136,7 +136,7 @@ in
 
     # Environment variables
     sessionVariables = {
-      EDITOR = "nvim";
+      EDITOR = "hx";
       BROWSER = if pkgs.stdenv.isDarwin then "arc" else "firefox";
       TERMINAL = if pkgs.stdenv.isDarwin then "kitty" else "alacritty";
       GOPATH = "$HOME/go";

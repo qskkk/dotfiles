@@ -310,15 +310,12 @@
           "vue"
         ];
         "eslint.run" = "onSave";
-
-        "[jsonc]" = {
-          "editor.defaultFormatter" = "esbenp.prettier-vscode";
-        };
         "[vue]" = {
           "editor.defaultFormatter" = "esbenp.prettier-vscode";
         };
         "[json]" = {
           "editor.defaultFormatter" = "esbenp.prettier-vscode";
+          "editor.formatOnSave" = false; # Disable format on save for JSON to avoid conflicts with vscode settings sync
         };
 
         # Configuration Go

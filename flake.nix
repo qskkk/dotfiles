@@ -31,12 +31,23 @@
       darwinSystem = "aarch64-darwin";
       linuxSystem = "x86_64-linux";
 
-      nixPathDarwin = "/Users/qskkk/workspace/perso/dotfiles";
-      nixPathLinux = "/home/qskkk/workspace/perso/dotfiles";
-
-      secrets = import (nixPathDarwin + "/secrets.nix");
+      # Import secrets from the actual filesystem using a path derivation
+      # When using --impure, we can access the source directory
+      secrets =
+        if builtins.pathExists ./secrets.nix
+        then import ./secrets.nix
+        else import ./secrets.nix.example;
 
       username = secrets.username;
+      
+      # Use a function to get the correct path based on the system
+      getNixPath = system:
+        if system == darwinSystem
+        then "/Users/${username}/workspace/perso/dotfiles"
+        else "/home/${username}/workspace/perso/dotfiles";
+
+      nixPathDarwin = getNixPath darwinSystem;
+      nixPathLinux = getNixPath linuxSystem;
 
     in
     {
@@ -94,7 +105,7 @@
               ];
             }
           )
-          ./nixos-configuration.nix
+          ./server-nixos-configuration.nix
           home-manager.nixosModules.home-manager
           nix-colors.homeManagerModule
         ];

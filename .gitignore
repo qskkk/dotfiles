@@ -7,3 +7,8 @@ result-*
 
 # Ignore secrets file
 secrets.nix
+
+# Ignore server configuration files
+home-manager/server-home.nix
+server-config.nix
+server-nixos-configuration.nix

@@ -165,12 +165,11 @@ in
       if.app-id = 'notion.id'
       run = 'move-node-to-workspace notes'
 
-      # Arc browser specific rules
-      # Arc without title should be floating
-      # [[on-window-detected]]
-      # if.app-id = 'company.thebrowser.Browser'
-      # if.window-title-regex-substring = '^ *$'
-      # run = 'layout floating'
+      # Arc Developer Tools - force tiling (must be before general Arc rule)
+      [[on-window-detected]]
+      if.app-id = 'company.thebrowser.Browser'
+      if.window-title-regex-substring = '.*Developer Tools.*'
+      run = ['layout tiling', 'move-node-to-workspace browser']
 
       # Arc browser general rule
       [[on-window-detected]]
@@ -204,22 +203,6 @@ in
       [[on-window-detected]]
       if.app-id = 'com.autodesk.fusion360'
       run = 'move-node-to-workspace perso'
-
-      # Arc Browser Developer Tools - force tiling and workspace assignment
-      [[on-window-detected]]
-      if.app-id = 'company.thebrowser.Browser'
-      if.window-title-regex-substring = 'Developer Tools'
-      run = ['layout tiling', 'move-node-to-workspace code']
-
-      [[on-window-detected]]
-      if.app-id = 'company.thebrowser.Browser'
-      if.window-title-regex-substring = 'DevTools'
-      run = ['layout tiling', 'move-node-to-workspace code']
-
-      [[on-window-detected]]
-      if.app-id = 'company.thebrowser.Browser'
-      if.window-title-regex-substring = 'Elements'
-      run = ['layout tiling', 'move-node-to-workspace code']
 
       [[on-window-detected]]
       if.app-id = 'com.google.Chrome'

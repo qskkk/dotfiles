@@ -68,8 +68,8 @@
     "free" = "vm_stat";
 
     # Development
-    "vim" = "nvim";
-    "vi" = "nvim";
+    "vim" = "hx";
+    "vi" = "hx";
     "python" = "python3";
     "pip" = "pip3";
 
@@ -104,9 +104,9 @@
       "pgrep -f AeroSpace && echo 'AeroSpace is running' || echo 'AeroSpace is not running'";
 
     # Darwin rebuild
-    "nbuild" = "sudo darwin-rebuild switch --flake ~/workspace/perso/dotfiles/. --impure";
-    "rebuild" = "darwin-rebuild switch --flake .";
-    "rebuild-debug" = "darwin-rebuild switch --flake . --show-trace --verbose";
+    "nbuild" = "sudo darwin-rebuild switch --flake path:/Users/qskkk/workspace/perso/dotfiles#${secrets.machineName} --impure";
+    "rebuild" = "darwin-rebuild switch --flake path:.#${secrets.machineName} --impure";
+    "rebuild-debug" = "darwin-rebuild switch --flake path:.#${secrets.machineName} --impure --show-trace --verbose";
 
     # macOS specific
     "showfiles" = "defaults write com.apple.Finder AppleShowAllFiles true && killall Finder";
@@ -116,10 +116,10 @@
     "shutdown" = "sudo shutdown -h now";
 
     # Quick edits
-    "zshrc" = "nvim ~/.zshrc";
-    "vimrc" = "nvim ~/.config/nvim/init.lua";
-    "sshconfig" = "nvim ~/.ssh/config";
-    "hosts" = "sudo nvim /etc/hosts";
+    "zshrc" = "hx ~/.zshrc";
+    "hxconfig" = "hx ~/.config/helix/config.toml";
+    "sshconfig" = "hx ~/.ssh/config";
+    "hosts" = "sudo hx /etc/hosts";
 
     # Utility
     "weather" = "curl wttr.in";
@@ -130,7 +130,7 @@
 
     # Quick navigation to common directories
     "cddf" = "cd ~/.config/dotfiles";
-    "cdnv" = "cd ~/.config/nvim";
+    "cdhx" = "cd ~/.config/helix";
     "cdws" = "cd ~/workspace";
     "cddl" = "cd ~/Downloads";
     "cddt" = "cd ~/Desktop";
@@ -182,7 +182,6 @@
       dbash () { docker exec -it $1 bash; }
       dsh () { docker exec -it $1 sh; }
       ksh () { kubectl exec -it $1 sh; }
-      goto () { cd ${workspace}/$1 ;}
       suso () {br=$(git branch | awk '/\*/ { print $2; }') && git branch --set-upstream-to=origin/$br $br ;}
       ssc () {cd ${workspace}/$1 && dcud && cd -;}
       sscall () {${sscallCmd};}

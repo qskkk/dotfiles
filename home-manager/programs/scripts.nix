@@ -70,24 +70,44 @@
     text = ''
       #!/usr/bin/env bash
 
-      CHOICE=$(gum choose --no-limit "all" "marcus" "hachiko" "gunther" "capitan" "tracker" "owney" "chase")
-      OPEN=$(gum choose "yes" "no")
+      # Load configuration from environment variables
+      github_prefix="''${PRODC_GITHUB_PREFIX:-}"
+      services_list="''${PRODC_SERVICES:-}"
 
-      github_prefix="https://github.com/japhy-team/"
+      if [ -z "$github_prefix" ]; then
+        echo "Error: PRODC_GITHUB_PREFIX environment variable is not set"
+        exit 1
+      fi
+
+      if [ -z "$services_list" ]; then
+        echo "Error: PRODC_SERVICES environment variable is not set"
+        exit 1
+      fi
+
+      # Convert services list to array for gum choose
+      IFS=' ' read -r -a services_array <<< "$services_list"
+
+      CHOICE=$(gum choose --no-limit "all" "''${services_array[@]}")
+      OPEN=$(gum choose "yes" "no")
 
       if [ -z "$CHOICE" ]; then
         CHOICE="all"
       fi
 
-      declare -A envs=(
-              ["marcus"]="marcus-production-arm"
-              ["hachiko"]="hachiko-production-arm"
-              ["gunther"]="gunther-production-arm"
-              ["capitan"]="capitan-production-arm-fr"
-              ["tracker"]="tracker-production-arm"
-              ["owney"]="owney-production"
-              ["chase"]="chase-production"
-          )
+      # Build envs mapping from environment variables
+      declare -A envs
+      for service in ''${services_array[@]}; do
+          service_upper=$(echo "$service" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
+          env_var="PRODC_ENV_''${service_upper}"
+          env_value="''${!env_var}"
+
+          if [ -z "$env_value" ]; then
+              echo "Error: Environment variable $env_var is not set for service $service"
+              exit 1
+          fi
+
+          envs[$service]="$env_value"
+      done
 
       declare -A environments
 
@@ -105,11 +125,17 @@
       for repo in "''${!environments[@]}"; do
           env_name=''${environments[$repo]}
           version=$(gum spin --spinner monkey --show-output --title "Fetching production version for $repo ..." -- aws elasticbeanstalk describe-environments --environment-names $env_name --query "Environments[0].VersionLabel" --output text)
-          url="''${github_prefix}''${repo}/compare/''${version#production_}...main"
-          echo "''${repo}: ''${url}"
+          latest_tag=$(gum spin --spinner monkey --show-output --title "Fetching latest tag for $repo ..." -- git ls-remote --tags --sort=-v:refname "''${github_prefix}''${repo}.git" | head -n1 | sed 's/.*refs\/tags\///' | sed 's/\^{}//' || echo "main")
+          prod_version="''${version#production_}"
+          url="''${github_prefix}''${repo}/compare/''${prod_version}...''${latest_tag}"
 
-          if [ $OPEN = "yes" ]; then
-              open $url & disown
+          if [ "$prod_version" != "$latest_tag" ]; then
+              echo "''${repo}: ''${url} (''${prod_version} -> ''${latest_tag})"
+              if [ $OPEN = "yes" ]; then
+                  open $url & disown
+              fi
+          else
+              echo "''${repo}: up to date (''${latest_tag})"
           fi
       done
     '';
@@ -140,7 +166,7 @@
       cd "$HOME/workspace/perso/dotfiles" || exit 1
 
       # Run the rebuild command
-      if nbuild; then
+      if sudo darwin-rebuild switch --flake path:.#Romains-MacBook-Pro --impure; then
         /usr/bin/osascript -e 'display notification "Rebuild completed successfully!" with title "Nix Darwin"' 2>/dev/null || true
       else
         /usr/bin/osascript -e 'display notification "Rebuild failed! Check terminal for errors." with title "Nix Darwin"' 2>/dev/null || true

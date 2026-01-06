@@ -37,6 +37,17 @@
       PURPLE_COLOR = "#C6A0F6";
       GREEN_COLOR = "#A6DA95";
       BLUE_COLOR = "#B7BDF8";
+
+      # Prodc.sh configuration
+      PRODC_GITHUB_PREFIX = secrets.prodcGithubPrefix or "eoeo";
+      PRODC_SERVICES = secrets.prodcServices or "";
+      PRODC_ENV_MARCUS = secrets.prodcEnvMarcus or "";
+      PRODC_ENV_HACHIKO = secrets.prodcEnvHachiko or "";
+      PRODC_ENV_GUNTHER = secrets.prodcEnvGunther or "";
+      PRODC_ENV_CAPITAN = secrets.prodcEnvCapitan or "";
+      PRODC_ENV_TRACKER = secrets.prodcEnvTracker or "";
+      PRODC_ENV_OWNEY = secrets.prodcEnvOwney or "";
+      PRODC_ENV_CHASE = secrets.prodcEnvChase or "";
     };
 
     # PATH additions
@@ -128,9 +139,11 @@
 
             function dlog() { docker logs -f $1; }
             function kbash() { kubectl exec -it $1 bash; }
+            function dbash() { docker exec -it $1 bash; }
             function dsh() { docker exec -it $1 sh; }
             function ksh() { kubectl exec -it $1 sh; }
             function goto() {cd $(gf goto "$1")}
+            function gtag() { git tag $1 && git push origin $1 }
             function suso() {
               br=$(git branch | awk '/\*/ { print $2; }') && git branch --set-upstream-to=origin/$br $br;
             }
