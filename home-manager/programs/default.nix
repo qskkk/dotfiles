@@ -10,6 +10,7 @@
     ./vscode.nix
     # ./yabai.nix
     # ./skhd.nix
+    # ./rift.nix
     ./aerospace.nix
     ./sketchybar.nix
     ./scripts.nix

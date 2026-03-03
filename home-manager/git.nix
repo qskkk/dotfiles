@@ -33,10 +33,13 @@ in
 {
   programs.git = {
     enable = true;
-    userName = secrets.username or "your-username";
-    userEmail = secrets.email or "your-email@example.com";
 
-    extraConfig = {
+    settings = {
+      user = {
+        name = secrets.username or "your-username";
+        email = secrets.email or "your-email@example.com";
+      };
+
       init.defaultBranch = "main";
       core = {
         editor = "nvim";
@@ -53,45 +56,42 @@ in
       # Reuse recorded resolution
       rerere.enabled = true;
 
-      # GPG signing (optional)
-      # commit.gpgsign = true;
-      # user.signingkey = "$GITHUB_TOKEN";
-    };
-
-    # Git aliases
-    aliases = {
-      st = "status";
-      co = "checkout";
-      br = "branch";
-      brc = "branch --show-current";
-      ci = "commit";
-      ca = "commit -a";
-      cam = "commit -am";
-      cl = "clone";
-      cp = "cherry-pick";
-      df = "diff";
-      dc = "diff --cached";
-      lg = "log --oneline --graph --decorate --all";
-      lga = "log --graph --pretty=format:'%C(yellow)%h%Creset -%C(red)%d%Creset %s %C(green)(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all";
-      unstage = "reset HEAD --";
-      last = "log -1 HEAD";
-      visual = "!gitk";
-      pushf = "push --force-with-lease";
-      amend = "commit --amend --no-edit";
-      fixup = "commit --fixup";
-      squash = "rebase -i --autosquash";
-    };
-
-    # Delta for better diffs
-    delta = {
-      enable = true;
-      options = {
-        navigate = true;
-        light = false;
-        side-by-side = true;
-        line-numbers = true;
-        syntax-theme = deltaTheme;
+      # Git aliases
+      alias = {
+        st = "status";
+        co = "checkout";
+        br = "branch";
+        brc = "branch --show-current";
+        ci = "commit";
+        ca = "commit -a";
+        cam = "commit -am";
+        cl = "clone";
+        cp = "cherry-pick";
+        df = "diff";
+        dc = "diff --cached";
+        lg = "log --oneline --graph --decorate --all";
+        lga = "log --graph --pretty=format:'%C(yellow)%h%Creset -%C(red)%d%Creset %s %C(green)(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all";
+        unstage = "reset HEAD --";
+        last = "log -1 HEAD";
+        visual = "!gitk";
+        pushf = "push --force-with-lease";
+        amend = "commit --amend --no-edit";
+        fixup = "commit --fixup";
+        squash = "rebase -i --autosquash";
       };
+    };
+  };
+
+  # Delta for better diffs (moved to separate program)
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options = {
+      navigate = true;
+      light = false;
+      side-by-side = true;
+      line-numbers = true;
+      syntax-theme = deltaTheme;
     };
   };
 

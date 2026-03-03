@@ -87,11 +87,10 @@ in
       alt-shift-w = 'move-node-to-workspace code'
       alt-shift-b = 'move-node-to-workspace notes'
 
-      # Multi-monitor management (similar to your ctrl+alt+cmd shortcuts)
-      ctrl-alt-cmd-left = 'move-node-to-monitor --wrap-around prev'
-      ctrl-alt-cmd-right = 'move-node-to-monitor --wrap-around next'
-      ctrl-alt-cmd-up = 'move-workspace-to-monitor --wrap-around next'
-      ctrl-alt-cmd-down = 'move-workspace-to-monitor --wrap-around prev'
+      ctrl-alt-cmd-shift-j = ['move-node-to-monitor --wrap-around down', 'focus-monitor --wrap-around down']
+      ctrl-alt-cmd-shift-l = ['move-node-to-monitor --wrap-around next', 'focus-monitor --wrap-around next']
+      ctrl-alt-cmd-shift-h = ['move-node-to-monitor --wrap-around prev', 'focus-monitor --wrap-around prev']
+      ctrl-alt-cmd-shift-k = ['move-node-to-monitor --wrap-around up', 'focus-monitor --wrap-around up']
 
       # AeroSpace specific: switch between floating and tiling
       alt-shift-space = 'layout floating tiling'
@@ -181,6 +180,10 @@ in
       run = 'move-node-to-workspace browser'
 
       [[on-window-detected]]
+      if.app-id = 'company.thebrowser.dia'
+      run = 'move-node-to-workspace browser'
+
+      [[on-window-detected]]
       if.app-id = 'com.google.Chrome'
       run = 'move-node-to-workspace browser'
 
@@ -232,9 +235,9 @@ in
       social = 'Built-in Retina Display'
       spec = 'Built-in Retina Display'
       obs = 'Built-in Retina Display'
-      code = 'XG2730 SERIES'
-      notes = 'XG2730 SERIES'
-      perso = 'XG2730 SERIES'
+      code = 'MAG271QX OLED'
+      notes = 'MAG271QX OLED'
+      perso = 'MAG271QX OLED'
       browser = 'BenQ GW2490E'
       terminal = 'BenQ GW2490E'
       db = 'BenQ GW2490E'

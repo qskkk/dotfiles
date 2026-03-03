@@ -66,9 +66,9 @@ in
       redis
 
     ] ++ lib.optionals pkgs.stdenv.isDarwin [
-      aerospace
       sketchybar
       karabiner-elements
+      aerospace
     ] ++ (with pkgs; [
       # Networking
       openssh
@@ -98,6 +98,7 @@ in
       golangci-lint
       gopls
       graphviz
+      jetbrains.goland
 
       #softs
       # orca-slicer
@@ -113,11 +114,8 @@ in
 
       # others
       # n
-      nodejs
+      nodejs  # overlay maps this to nodejs_22 (npm is bundled)
       yarn
-
-      # node pagkages
-      nodePackages.npm
     ]);
 
     sessionPath = [
@@ -127,11 +125,12 @@ in
       "$HOME/.config/yarn/global/node_modules/.bin"
       "$HOME/dev/flutter/bin"
       "$HOME/.pub-cache/bin"
+      "$HOME/.local/bin"
     ] ++ lib.optionals pkgs.stdenv.isDarwin [
       "/usr/local/bin"
       "/opt/homebrew/bin"
       "/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
-      "/Applications/GoLand.app/Contents/MacOS"
+      "${pkgs.jetbrains.goland}/Applications/GoLand.app/Contents/MacOS"
     ];
 
     # Environment variables
@@ -240,25 +239,14 @@ in
       fi
     '';
 
-    reloadAerospace = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      echo "Reloading Aerospace configuration..."
-
-      if [ -x "${pkgs.aerospace}/Applications/AeroSpace.app/Contents/MacOS/AeroSpace" ]; then
-        $DRY_RUN_CMD "${pkgs.aerospace}/Applications/AeroSpace.app/Contents/MacOS/AeroSpace" --reload &
-        echo "Aerospace reload command sent"
-      else
-        echo "Aerospace not found at ${pkgs.aerospace}/Applications/AeroSpace.app/Contents/MacOS/AeroSpace"
-      fi
-    '';
-
-    # Activation script to install npm packages automatically
     installNpmPackages = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       echo "Installing npm packages..."
 
     export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 
-    # Ajouter d'autres packages npm ici
+    # Add other npm packages here
     NPM_PACKAGES=(
+      "@google/gemini-cli"
       "@anthropic-ai/claude-code"
       "typescript"
       "prettier"

@@ -60,9 +60,6 @@ in
   homebrew = {
     enable = true;
 
-    brews = [
-    ];
-
     casks = [
       "warp"
     ];

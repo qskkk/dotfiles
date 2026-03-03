@@ -1,12 +1,12 @@
 { config, ... }:
 
 {
-  # Configuration générale de Warp
+  # General Warp configuration
   home.file.".warp/config.yaml".text = ''
     theme: custom-nix
   '';
 
-  # Thème personnalisé Warp
+  # Custom Warp theme
   home.file.".warp/themes/custom-nix.yaml".text = ''
     name: Custom Nix Theme
     accent: "#${config.colorScheme.palette.base0D}"

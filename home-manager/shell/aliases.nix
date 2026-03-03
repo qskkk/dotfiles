@@ -97,11 +97,16 @@
     "nr" = "nix run";
     "nix-gc" = "nix-collect-garbage -d";
 
+    # Rift management
+    # "riftrestart" = "pkill -x rift";
+    # "riftreload" = "touch ~/.config/rift/config.toml";
+    # "riftstatus" =
+    #   "pgrep -x rift && echo 'Rift is running' || echo 'Rift is not running'";
+
     # AeroSpace management
-    "aerorestart" = "bash ~/.scripts/aerospace_restart.sh";
+    "aerorestart" = "pkill -x AeroSpace";
     "aeroreload" = "aerospace reload-config";
-    "aerostatus" =
-      "pgrep -f AeroSpace && echo 'AeroSpace is running' || echo 'AeroSpace is not running'";
+    "aerostatus" = "pgrep -x AeroSpace && echo 'AeroSpace is running' || echo 'AeroSpace is not running'";
 
     # Darwin rebuild
     "nbuild" = "sudo darwin-rebuild switch --flake path:/Users/qskkk/workspace/perso/dotfiles#${secrets.machineName} --impure";

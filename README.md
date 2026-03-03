@@ -1,243 +1,151 @@
 # Nix Darwin Dotfiles
 
-A comprehensive dotfiles configuration for macOS using Nix Darwin, Home Manager, and Nix Flakes.
+macOS dotfiles managed with Nix Darwin, Home Manager, and Nix Flakes.
 
-## 🌟 Features
+## Features
 
-- **Nix Flakes** - Reproducible and declarative system configuration
-- **nix-darwin** - macOS system configuration management
-- **Home Manager** - User environment and dotfiles management
-- **nixvim** - Neovim configuration via Nix
-- **nix-colors** - Consistent color theming across applications
-- **Catppuccin Theme** - Beautiful, consistent theming throughout
+- **nix-darwin** — macOS system configuration
+- **Home Manager** — user environment and program configs
+- **nixvim** — Neovim configured via Nix
+- **nix-colors** — consistent theming across apps
+- **AeroSpace** — tiling window manager
+- **Sketchybar** — custom menu bar
 
-## 🚀 Quick Start
+## Prerequisites
 
-### Prerequisites
-
-1. **Install Nix** (if not already installed):
+1. **Install Nix** (Determinate installer recommended):
 
    ```bash
    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
    ```
 
-2. **Install nix-darwin**:
-   ```bash
-   nix-build https://github.com/LnL7/nix-darwin/archive/master.tar.gz -A installer
-   ./result/bin/darwin-installer
+2. **Enable flakes** — already enabled if you used the Determinate installer. Otherwise add to `/etc/nix/nix.conf`:
+
+   ```
+   experimental-features = nix-command flakes
    ```
 
-### Setup
+## Setup
 
-1. **Clone this repository**:
+1. **Clone the repo** to the expected path:
 
    ```bash
-   git clone <your-repo-url> ~/dotfiles
-   cd ~/dotfiles
+   git clone <repo-url> ~/workspace/perso/dotfiles
+   cd ~/workspace/perso/dotfiles
    ```
+
+   > The flake uses this path. Cloning elsewhere requires updating `getNixPath` in `flake.nix`.
 
 2. **Configure secrets**:
 
    ```bash
    cp secrets.nix.example secrets.nix
-   # Edit secrets.nix with your personal values
    ```
 
-3. **Apply the configuration**:
-   ```bash
-   darwin-rebuild switch --flake .
-   ```
+   Edit `secrets.nix` and fill in your values — at minimum `username` and `machineName`:
 
-## 🔒 Secrets Management
-
-This configuration uses a `secrets.nix` file to store sensitive information that shouldn't be public.
-
-### Setup your secrets:
-
-1. Copy the example file:
-
-   ```bash
-   cp secrets.nix.example secrets.nix
-   ```
-
-2. Edit `secrets.nix` with your actual values:
    ```nix
    {
      username = "your-username";
-     email = "your-email@example.com";
-     goprivate = "github.com/your-company";
-     workspaceUrl = "~/workspace/your-company/backend";
-     githubOrg = "your-company";
+     email = "your@email.com";
+     machineName = "Your-MacBook-Pro";  # must match your hostname
+     ...
    }
    ```
 
-The `secrets.nix` file is gitignored and will never be committed to the repository.
+3. **Bootstrap nix-darwin** (first time only):
 
-## 📁 Structure
+   ```bash
+   nix run nix-darwin -- switch --flake ~/workspace/perso/dotfiles/. --impure
+   ```
+
+4. **Apply the configuration**:
+
+   ```bash
+   make switch
+   # equivalent to: sudo darwin-rebuild switch --flake ~/workspace/perso/dotfiles/. --impure
+   ```
+
+## Daily Usage
+
+```bash
+make switch      # rebuild and switch to the current configuration
+```
+
+### Wallpaper / theme presets
+
+```bash
+make wall-pink   # Rose Pine Moon theme
+make wall-blue   # Catppuccin Mocha theme
+make wall-green  # Everforest theme
+make wall-rand   # random wallpaper from assets/
+```
+
+### Updating inputs
+
+```bash
+nix flake update                          # update all inputs
+nix flake update home-manager            # update a single input
+make switch                               # apply updates
+```
+
+### Rollback
+
+```bash
+darwin-rebuild --rollback
+```
+
+## Structure
 
 ```
 .
-├── flake.nix                    # Main flake configuration
-├── darwin-configuration.nix    # macOS system configuration
+├── flake.nix                     # inputs, outputs, system definitions
+├── darwin-configuration.nix      # macOS system config (brew, defaults, etc.)
 ├── home-manager/
-│   ├── home.nix                # Main home-manager configuration
-│   ├── git.nix                 # Git configuration
-│   ├── programs/               # Application configurations
-│   │   ├── default.nix
-│   │   ├── kitty.nix          # Terminal emulator
-│   │   ├── neovim.nix         # Neovim configuration
-│   │   └── vscode.nix         # VS Code configuration
-│   └── shell/                  # Shell configuration
-│       ├── default.nix
-│       ├── zsh.nix            # Zsh configuration
-│       ├── starship.nix       # Prompt configuration
-│       └── aliases.nix        # Shell aliases
-├── Makefile                    # Convenient commands
-└── README.md                   # This file
+│   ├── home.nix                  # main home-manager entrypoint
+│   ├── git.nix                   # git config
+│   ├── programs/
+│   │   ├── aerospace.nix         # tiling window manager
+│   │   ├── sketchybar.nix        # menu bar
+│   │   ├── vscode.nix
+│   │   ├── warp.nix
+│   │   ├── karabiner.nix
+│   │   └── scripts.nix           # custom shell scripts
+│   └── shell/
+│       ├── zsh.nix
+│       ├── starship.nix
+│       └── aliases.nix
+├── pkgs/                         # custom derivations
+├── secrets.nix                   # gitignored — personal values
+├── secrets.nix.example           # template for secrets.nix
+├── Makefile
+└── CLAUDE.md                     # guidelines for AI assistance
 ```
 
-## 🛠 Usage
+## Secrets
 
-### Daily Commands
+`secrets.nix` is gitignored. It holds personal values passed to modules via `specialArgs`.
+Always use `secrets.nix.example` as the source of truth for required fields.
 
+## Troubleshooting
+
+**Build fails with "attribute missing" or similar**
+Check that all required fields in `secrets.nix` match `secrets.nix.example`.
+
+**`machineName` mismatch**
+The flake key must match your machine's hostname. Check with `scutil --get LocalHostName`.
+
+**`--impure` is required**
+This config reads `secrets.nix` from the filesystem at eval time, so `--impure` is always needed.
+
+**Show full error trace**
 ```bash
-# Build and switch to new configuration
-make switch
-
-# Update all inputs and rebuild
-make upgrade
-
-# Check configuration for errors
-make check
-
-# Clean old generations
-make clean
-
-# Rollback to previous generation
-make rollback
-
-# List all generations
-make generations
+sudo darwin-rebuild switch --flake ~/workspace/perso/dotfiles/. --impure --show-trace
 ```
 
-### Development
+## Acknowledgments
 
-```bash
-# Format all Nix files
-make format
-
-# Test configuration
-make test
-
-# Enter development shell
-make dev-shell
-```
-
-## 📦 What's Included
-
-### System Applications (via Homebrew)
-
-- **Browsers**: Arc, Firefox
-- **Development**: VS Code, Docker, Postman
-- **Productivity**: Raycast, Notion, Obsidian
-- **Media**: Spotify, VLC
-- **Utilities**: 1Password, CleanMyMac
-
-### CLI Tools
-
-- **Shell**: Zsh with Oh My Zsh, Starship prompt
-- **Editor**: Neovim with comprehensive LSP setup
-- **Terminal**: Kitty with Catppuccin theme
-- **Git**: Enhanced with delta, aliases, and GitHub CLI
-- **Search**: Ripgrep, fd, fzf
-- **Navigation**: Zoxide, eza, tree
-- **Development**: Node.js, Python, Go, Rust toolchains
-
-### Development Features
-
-- **Language Servers**: TypeScript, Go, Rust, Python, Nix
-- **Formatters**: Prettier, Black, gofmt, rustfmt
-- **Linters**: ESLint, Flake8, Clippy
-- **Git Integration**: GitLens, Gitsigns
-- **Fuzzy Finding**: Telescope, FZF integration
-
-## 🎨 Theming
-
-The configuration uses the **Catppuccin Mocha** theme consistently across:
-
-- Terminal (Kitty)
-- Editor (Neovim)
-- VS Code
-- Shell prompt (Starship)
-
-Colors are managed centrally via nix-colors for consistency.
-
-## ⚙️ Customization
-
-### Adding New Applications
-
-1. **System applications**: Add to `darwin-configuration.nix` in the `homebrew.casks` section
-2. **CLI tools**: Add to `home-manager/home.nix` in the `home.packages` section
-3. **Configurations**: Create new files in `home-manager/programs/`
-
-### Modifying Existing Configurations
-
-All application configurations are in separate Nix files for easy modification:
-
-- Shell: `home-manager/shell/`
-- Programs: `home-manager/programs/`
-- Git: `home-manager/git.nix`
-
-### Changing Themes
-
-To change the color theme:
-
-1. Browse available themes at [nix-colors](https://github.com/misterio77/nix-colors)
-2. Update `colorScheme` in `home-manager/home.nix`
-3. Rebuild with `make switch`
-
-## 🚨 Troubleshooting
-
-### Common Issues
-
-1. **Permission errors**: Ensure you have admin privileges
-2. **Build failures**: Run `make check` to validate configuration
-3. **Outdated inputs**: Run `make update` to refresh dependencies
-4. **Rollback needed**: Use `make rollback` to revert changes
-
-### Getting Help
-
-```bash
-# Show available commands
-make help
-
-# Check system status
-make show-config
-
-# View build logs
-darwin-rebuild switch --flake . --show-trace --verbose
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Make your changes
-3. Test with `make test`
-4. Format code with `make format`
-5. Submit a pull request
-
-## 📄 License
-
-This configuration is available under the MIT License. Feel free to use and modify as needed.
-
-## 🙏 Acknowledgments
-
-- Inspired by [blaadje's Mac-dotfiles](https://github.com/blaadje/Mac-dotfiles)
-- Built with [nix-darwin](https://github.com/LnL7/nix-darwin)
-- Uses [Home Manager](https://github.com/nix-community/home-manager)
-- Themed with [Catppuccin](https://github.com/catppuccin/catppuccin)
-- Colors via [nix-colors](https://github.com/misterio77/nix-colors)
-
----
-
-**Happy coding! 🎉**
+- [nix-darwin](https://github.com/LnL7/nix-darwin)
+- [Home Manager](https://github.com/nix-community/home-manager)
+- [nix-colors](https://github.com/misterio77/nix-colors)
+- [nixvim](https://github.com/nix-community/nixvim)

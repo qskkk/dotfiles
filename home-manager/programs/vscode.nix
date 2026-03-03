@@ -330,7 +330,7 @@
         "go.formatTool" = "gofmt";
         "go.toolsManagement.autoUpdate" = true;
 
-        # Configuration Go pour navigation interface/implémentation
+        # Go configuration for interface/implementation navigation
         "go.gotoSymbol.includeImports" = true;
         "go.gotoSymbol.includeGoroot" = true;
         "go.enableCodeLens" = {

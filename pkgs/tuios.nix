@@ -8,10 +8,10 @@ buildGoModule rec {
     owner = "Gaurav-Gosain";
     repo = "tuios";
     rev = "main";  # or specify a specific commit/tag
-    hash = "sha256-cN8jubDeK+w8E6Mii6kyi2b/ugmqqfDk+sz1U4akBJc=";
+    hash = "sha256-Ra9n1LayjRnDv1BQj+DgbgZb54pn+XumBkbDd1+VCP4=";
   };
 
-  vendorHash = "sha256-0hxj6EUTCV7R59XJheHj9PR/oWQH+2uzYOPhVQWa0hU=";
+  vendorHash = "sha256-kDZRT/Ua+SaxyZ6RI9ZY2tqBgQBWo755fvQVRupBsUc=";
 
   # Build the tuios command
   subPackages = [ "cmd/tuios" ];
