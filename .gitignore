@@ -14,3 +14,5 @@ server-config.nix
 server-nixos-configuration.nix
 
 .idea/
+
+.DS_Store
