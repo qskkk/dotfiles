@@ -17,5 +17,6 @@
     ./warp.nix
     ./karabiner.nix
     # ./nixvim.nix  # Removed - switching to Helix
+    ./claude.nix
   ];
 }
