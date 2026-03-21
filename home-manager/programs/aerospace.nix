@@ -61,6 +61,7 @@ in
       alt-7 = 'workspace browser'
       alt-8 = 'workspace terminal'
       alt-9 = 'workspace db'
+      alt-0 = 'workspace claude'
 
       # Workspace navigation by letters (matching your lettered spaces)
       alt-s = 'workspace social'
@@ -217,6 +218,10 @@ in
       if.window-title-regex-substring = '.*Web Inspector.*'
       run = 'layout tiling'
 
+      [[on-window-detected]]
+      if.app-id = 'com.anthropic.claudefordesktop'
+      run = 'move-node-to-workspace claude'
+
       # Default rule for any window - set to tiling layout
       [[on-window-detected]]
       run = 'layout tiling'
@@ -236,6 +241,7 @@ in
       spec = 'Built-in Retina Display'
       obs = 'Built-in Retina Display'
       code = 'MAG271QX OLED'
+      claude = 'MAG271QX OLED'
       notes = 'MAG271QX OLED'
       perso = 'MAG271QX OLED'
       browser = 'BenQ GW2490E'

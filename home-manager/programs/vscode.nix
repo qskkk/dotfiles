@@ -13,6 +13,18 @@
     profiles.default = {
       # Extensions
       extensions = with pkgs.vscode-extensions; [
+        # AI
+        (pkgs.vscode-utils.buildVscodeMarketplaceExtension {
+          mktplcRef = {
+            name = "claude-code";
+            publisher = "anthropic";
+            version = "latest";
+          };
+          vsix = builtins.fetchurl {
+            url = "https://anthropic.gallery.vsassets.io/_apis/public/gallery/publisher/anthropic/extension/claude-code/latest/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage";
+            name = "anthropic.claude-code.vsix";
+          };
+        })
         # Language support
         # vscodevim.vim
         ms-python.python
@@ -315,8 +327,14 @@
         };
         "[json]" = {
           "editor.defaultFormatter" = "esbenp.prettier-vscode";
-          "editor.formatOnSave" = false; # Disable format on save for JSON to avoid conflicts with vscode settings sync
+          "editor.formatOnSave" = false;
         };
+        "[jsonc]" = {
+          "editor.formatOnSave" = false;
+        };
+
+        # Treat Nix store files and symlinks to them as read-only
+        "files.readonlyFromPermissions" = true;
 
         # Configuration Go
         "[go]" = {

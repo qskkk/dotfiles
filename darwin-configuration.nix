@@ -61,6 +61,7 @@ in
     enable = true;
 
     casks = [
+      "orbstack"
       "warp"
     ];
   };

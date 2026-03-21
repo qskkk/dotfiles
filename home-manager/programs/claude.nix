@@ -12,15 +12,15 @@
 {
   # skhd configuration
   home.file.".claude/settings.json" = {
-    text = ''
-      {
-        "enabledPlugins": {
-          "gopls-lsp@claude-plugins-official": true,
-          "typescript-lsp@claude-plugins-official": true,
-          "stella@stella": true
-        },
-        "alwaysThinkingEnabled": true
-      }
-    '';
+    text = builtins.toJSON {
+      enabledPlugins = {};
+      mcpServers = {
+        linear = {
+          type = "sse";
+          url = "https://mcp.linear.app/mcp";
+        };
+      };
+      alwaysThinkingEnabled = true;
+    };
   };
 }

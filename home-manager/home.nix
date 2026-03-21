@@ -64,6 +64,7 @@ in
       awscli2
       newman
       redis
+      devenv
 
     ] ++ lib.optionals pkgs.stdenv.isDarwin [
       sketchybar
@@ -82,7 +83,6 @@ in
 
       # Other CLI tools
       ncdu
-      tokei
       hyperfine # Window management dependencies
       jq
       jankyborders
@@ -109,7 +109,6 @@ in
       nixfmt-rfc-style # Nix formatter
       nodePackages.typescript-language-server
       nodePackages.vscode-langservers-extracted
-      rust-analyzer
       python3Packages.python-lsp-server
 
       # others
