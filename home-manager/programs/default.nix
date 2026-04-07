@@ -7,7 +7,7 @@
 
 {
   imports = [
-    ./vscode.nix
+    # ./vscode.nix
     ./zed.nix
     ./scripts.nix
     ./aerospace.nix
