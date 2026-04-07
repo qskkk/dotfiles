@@ -146,6 +146,13 @@ in
   # AMD Ryzen — CPU governor & microcode
   hardware.cpu.amd.updateMicrocode = true;
 
+  # Sunshine — game streaming server (Moonlight client on macOS)
+  services.sunshine = {
+    enable = true;
+    openFirewall = true;
+    capSysAdmin = true;
+  };
+
   # Steam
   programs.steam = {
     enable = true;

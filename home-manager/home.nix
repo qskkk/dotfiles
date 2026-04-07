@@ -86,6 +86,7 @@ in
       hyperfine # Window management dependencies
       jq
     ]) ++ lib.optionals pkgs.stdenv.isDarwin [
+      moonlight-qt        # Game streaming client (connects to Sunshine on Linux)
       jankyborders
       customPkgs.tuios    # TUI for managing iOS devices
       git-fleet.packages.aarch64-darwin.default
