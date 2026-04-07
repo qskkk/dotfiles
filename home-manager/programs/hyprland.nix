@@ -83,6 +83,7 @@ lib.mkIf pkgs.stdenv.isLinux {
       # Input
       input = {
         kb_layout = "us";
+        kb_variant = "dvorak";
         follow_mouse = 1;
         sensitivity = 0;
       };

@@ -155,7 +155,13 @@ in
 
   # Timezone and locale
   time.timeZone = "Europe/Paris";
+  time.hardwareClockInLocalTime = true; # Windows dual-boot compat
   i18n.defaultLocale = "en_US.UTF-8";
+
+  # Keyboard — Dvorak by default
+  console.keyMap = "dvorak";            # TTY/console
+  services.xserver.xkb.layout = "us";  # Xwayland
+  services.xserver.xkb.variant = "dvorak";
 
   # System state version
   system.stateVersion = "24.05";
