@@ -85,8 +85,8 @@ in
       ncdu
       hyperfine # Window management dependencies
       jq
-      jankyborders
     ]) ++ lib.optionals pkgs.stdenv.isDarwin [
+      jankyborders
       git-fleet.packages.aarch64-darwin.default
     ] ++ lib.optionals pkgs.stdenv.isLinux [
       git-fleet.packages.x86_64-linux.default
