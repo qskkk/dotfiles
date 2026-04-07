@@ -99,7 +99,7 @@ in
       golangci-lint
       gopls
       graphviz
-      jetbrains.goland
+      # jetbrains.goland
 
       #softs
       # orca-slicer
