@@ -91,8 +91,47 @@
         ];
       };
 
-      # NixOS configuration
-      nixosConfigurations."${secrets.nixosMachineName or "nixos"}" = nixpkgs.lib.nixosSystem {
+      # NixOS desktop configuration
+      nixosConfigurations."${secrets.nixosDesktopMachineName or "nixos-desktop"}" = nixpkgs.lib.nixosSystem {
+        system = linuxSystem;
+
+        specialArgs = {
+          inherit
+            nix-colors
+            nixvim
+            username
+            secrets
+            git-fleet
+            ;
+          nixPath = nixPathLinux;
+        };
+
+        modules = [
+          (
+            { pkgs, ... }:
+            {
+              nixpkgs.overlays = [
+                (final: prev: {
+                  nodejs = prev.nodejs_22;
+                  nodePackages = prev.nodePackages.override {
+                    nodejs = prev.nodejs_22;
+                  };
+                })
+              ];
+
+              environment.systemPackages = [
+                git-fleet.packages.x86_64-linux.default
+              ];
+            }
+          )
+          ./nixos-configuration.nix
+          home-manager.nixosModules.home-manager
+          nix-colors.homeManagerModule
+        ];
+      };
+
+      # NixOS server configuration
+      nixosConfigurations."${secrets.nixosServerMachineName or "nixos-server"}" = nixpkgs.lib.nixosSystem {
         system = linuxSystem;
 
         specialArgs = {

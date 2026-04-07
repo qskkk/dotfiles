@@ -4,6 +4,9 @@ COLOR ?= pink
 switch:
 	sudo darwin-rebuild switch --flake ~/workspace/perso/dotfiles/. --impure
 
+nixos-switch:
+	sudo nixos-rebuild switch --flake ~/workspace/perso/dotfiles/. --impure
+
 wall-pink:
 	@make sw WALLPAPER=pink.jpg COLOR=pink THEME=rose-pine-moon
 

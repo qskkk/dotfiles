@@ -11,9 +11,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Networking
-  networking.hostName = "nixos"; # Define your hostname
-
   # File systems - REPLACE THIS with output from nixos-generate-config
   fileSystems."/" = {
     device = "/dev/disk/by-label/nixos";

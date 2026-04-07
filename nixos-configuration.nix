@@ -84,7 +84,7 @@ in
   users.users."${username}" = {
     isNormalUser = true;
     home = homeDirectory;
-    extraGroups = [ "wheel" "networkmanager" "docker" ];
+    extraGroups = [ "wheel" "networkmanager" "docker" "video" "audio" ];
     shell = pkgs.zsh;
   };
 
@@ -92,7 +92,64 @@ in
   security.sudo.wheelNeedsPassword = true;
 
   # Networking
+  networking.hostName = secrets.nixosDesktopMachineName or "nixos-desktop";
   networking.networkmanager.enable = true;
+
+  # Hyprland
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true; # compatibility for X11 games
+  };
+
+  # Login manager
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+        user = "greeter";
+      };
+    };
+  };
+
+  # Audio via PipeWire
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+
+  # Bluetooth
+  hardware.bluetooth.enable = true;
+
+  # Docker
+  virtualisation.docker.enable = true;
+
+  # NVIDIA RTX 5080
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia = {
+    modesetting.enable = true;
+    open = true; # RTX 5080 (Blackwell) requires open kernel module
+    nvidiaSettings = true;
+    package = config.boot.kernelPackages.nvidiaPackages.beta; # 5080 needs latest drivers
+  };
+
+  # GPU & Gaming
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true; # 32-bit support for Steam/Proton
+  };
+
+  # AMD Ryzen — CPU governor & microcode
+  hardware.cpu.amd.updateMicrocode = true;
+
+  # Steam
+  programs.steam = {
+    enable = true;
+    gamescopeSession.enable = true;
+  };
+  programs.gamemode.enable = true;
 
   # Timezone and locale
   time.timeZone = "Europe/Paris";

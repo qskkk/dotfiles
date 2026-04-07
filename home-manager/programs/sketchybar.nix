@@ -5,7 +5,7 @@
   ...
 }:
 
-let
+lib.mkIf pkgs.stdenv.isDarwin (let
   palette = config.colorScheme.palette;
   toHex = c: "0xff${c}";
   color_background = toHex palette.base00;
@@ -733,4 +733,4 @@ in
     '';
     executable = true;
   };
-}
+})

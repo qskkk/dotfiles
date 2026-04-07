@@ -5,7 +5,7 @@
   ...
 }:
 
-{
+lib.mkIf pkgs.stdenv.isDarwin {
   # Karabiner-Elements configuration
   home.file.".config/karabiner/karabiner.json" = {
     force = true; # Force overwrite to avoid backup conflicts

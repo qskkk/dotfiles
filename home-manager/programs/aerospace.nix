@@ -9,7 +9,7 @@ let
   palette = config.colorScheme.palette;
 in
 
-{
+lib.mkIf pkgs.stdenv.isDarwin {
   # AeroSpace configuration file
   home.file.".config/aerospace/aerospace.toml" = {
     text = ''

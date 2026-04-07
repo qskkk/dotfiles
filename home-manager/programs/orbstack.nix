@@ -5,7 +5,7 @@
   ...
 }:
 
-let
+lib.mkIf pkgs.stdenv.isDarwin (let
   # M3 Pro 36GB — reserve ~12GB for macOS, give OrbStack generous resources
   cpuLimit = 10; # M3 Pro has 11-12 cores
   memoryLimitMB = 24576; # 24GB for containers/VMs
@@ -61,4 +61,4 @@ in
       ];
     };
   };
-}
+})

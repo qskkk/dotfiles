@@ -1,6 +1,6 @@
-{ config, ... }:
+{ config, pkgs, lib, ... }:
 
-{
+lib.mkIf pkgs.stdenv.isDarwin {
   # General Warp configuration
   home.file.".warp/config.yaml".text = ''
     theme: custom-nix
