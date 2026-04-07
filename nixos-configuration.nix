@@ -12,7 +12,7 @@
 
 let
   homeDirectory = "/home/${username}";
-  nixPath = homeDirectory + "/workspace/perso/dotfiles/";
+  nixPath = secrets.nixosDotfilesPath or (homeDirectory + "/dotfiles/");
   wallpaperSource = nixPath + secrets.wallpaperPath;
 
   nix-colors-lib = nix-colors.lib.contrib { inherit pkgs; };

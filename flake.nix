@@ -40,14 +40,8 @@
 
       username = secrets.username;
       
-      # Use a function to get the correct path based on the system
-      getNixPath = system:
-        if system == darwinSystem
-        then "/Users/${username}/workspace/perso/dotfiles"
-        else "/home/${username}/workspace/perso/dotfiles";
-
-      nixPathDarwin = getNixPath darwinSystem;
-      nixPathLinux = getNixPath linuxSystem;
+      nixPathDarwin = secrets.dotfilesPath or "/Users/${username}/workspace/perso/dotfiles";
+      nixPathLinux = secrets.nixosDotfilesPath or "/home/${username}/dotfiles";
 
     in
     {
