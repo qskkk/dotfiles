@@ -11,7 +11,7 @@ let
   inactiveColor = "0xff${palette.base05}";
 in
 
-{
+lib.mkIf pkgs.stdenv.isDarwin {
   # Yabai configuration
   home.file.".yabairc" = {
     text = ''

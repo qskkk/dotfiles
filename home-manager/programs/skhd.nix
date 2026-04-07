@@ -8,7 +8,7 @@
   ...
 }:
 
-{
+lib.mkIf pkgs.stdenv.isDarwin {
   # skhd configuration
   home.file.".skhdrc" = {
     text = ''

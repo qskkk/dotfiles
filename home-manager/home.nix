@@ -87,6 +87,7 @@ in
       jq
     ]) ++ lib.optionals pkgs.stdenv.isDarwin [
       jankyborders
+      customPkgs.tuios    # TUI for managing iOS devices
       git-fleet.packages.aarch64-darwin.default
     ] ++ lib.optionals pkgs.stdenv.isLinux [
       git-fleet.packages.x86_64-linux.default
@@ -94,7 +95,6 @@ in
 
       # GO tools
       customPkgs.go-1_26  # Go 1.26 from source
-      customPkgs.tuios    # TUI for managing iOS devices
       golangci-lint
       gopls
       graphviz
