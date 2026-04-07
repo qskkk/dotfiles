@@ -93,7 +93,7 @@ in
     ] ++ (with pkgs; [
 
       # GO tools
-      customPkgs.go-1_25  # Go 1.25 from source
+      customPkgs.go-1_26  # Go 1.26 from source
       customPkgs.tuios    # TUI for managing iOS devices
       golangci-lint
       gopls

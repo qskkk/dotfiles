@@ -8,6 +8,7 @@
 {
   imports = [
     ./vscode.nix
+    ./zed.nix
     # ./yabai.nix
     # ./skhd.nix
     # ./rift.nix

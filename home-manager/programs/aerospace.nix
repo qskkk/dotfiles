@@ -88,10 +88,10 @@ in
       alt-shift-w = 'move-node-to-workspace code'
       alt-shift-b = 'move-node-to-workspace notes'
 
-      ctrl-alt-cmd-shift-j = ['move-node-to-monitor --wrap-around down', 'focus-monitor --wrap-around down']
-      ctrl-alt-cmd-shift-l = ['move-node-to-monitor --wrap-around next', 'focus-monitor --wrap-around next']
-      ctrl-alt-cmd-shift-h = ['move-node-to-monitor --wrap-around prev', 'focus-monitor --wrap-around prev']
-      ctrl-alt-cmd-shift-k = ['move-node-to-monitor --wrap-around up', 'focus-monitor --wrap-around up']
+      ctrl-alt-cmd-shift-down = ['move-node-to-monitor --wrap-around down', 'focus-monitor --wrap-around down']
+      ctrl-alt-cmd-shift-right = ['move-node-to-monitor --wrap-around next', 'focus-monitor --wrap-around next']
+      ctrl-alt-cmd-shift-left = ['move-node-to-monitor --wrap-around prev', 'focus-monitor --wrap-around prev']
+      ctrl-alt-cmd-shift-up = ['move-node-to-monitor --wrap-around up', 'focus-monitor --wrap-around up']
 
       # AeroSpace specific: switch between floating and tiling
       alt-shift-space = 'layout floating tiling'
@@ -159,6 +159,10 @@ in
 
       [[on-window-detected]]
       if.app-id = 'com.jetbrains.goland'
+      run = 'move-node-to-workspace code'
+
+      [[on-window-detected]]
+      if.app-id = 'dev.zed.Zed'
       run = 'move-node-to-workspace code'
 
       [[on-window-detected]]
