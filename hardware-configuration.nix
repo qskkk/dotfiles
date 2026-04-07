@@ -7,8 +7,13 @@
 {
   imports = [ ];
 
-  # Boot loader configuration - adjust based on your system
-  boot.loader.systemd-boot.enable = true;
+  # Boot loader — GRUB for dual-boot with Windows
+  boot.loader.grub = {
+    enable = true;
+    device = "nodev";        # EFI, not MBR
+    efiSupport = true;
+    useOSProber = true;      # auto-detect Windows
+  };
   boot.loader.efi.canTouchEfiVariables = true;
 
   # File systems - REPLACE THIS with output from nixos-generate-config

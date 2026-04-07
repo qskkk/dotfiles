@@ -42,6 +42,8 @@ in
     vim
     wget
     curl
+    os-prober  # detect Windows for GRUB dual-boot
+    ntfs3g     # mount Windows NTFS partitions
   ];
 
   # Fonts
