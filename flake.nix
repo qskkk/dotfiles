@@ -92,7 +92,7 @@
       };
 
       # NixOS desktop configuration
-      nixosConfigurations."${secrets.nixosDesktopMachineName or "nixos-desktop"}" = nixpkgs.lib.nixosSystem {
+      nixosConfigurations."${secrets.nixosDesktopMachineName or "nixos"}" = nixpkgs.lib.nixosSystem {
         system = linuxSystem;
 
         specialArgs = {
