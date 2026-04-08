@@ -8,6 +8,7 @@
   secrets,
   git-fleet,
   zen-browser,
+  moza,
   ...
 }:
 
@@ -154,6 +155,14 @@ in
     openFirewall = true;
     capSysAdmin = true;
   };
+
+  # Moza sim racing — force feedback driver + udev rules
+  boot.extraModulePackages = [
+    (config.boot.kernelPackages.callPackage "${moza}/universal-pidff/universal-pidff.nix" {})
+  ];
+  services.udev.extraRules = ''
+    SUBSYSTEM=="tty", KERNEL=="ttyACM*", ATTRS{idVendor}=="346e", ACTION=="add", MODE="0666", TAG+="uaccess"
+  '';
 
   # Steam
   programs.steam = {

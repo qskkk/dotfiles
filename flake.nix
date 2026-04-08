@@ -11,6 +11,7 @@
 
     git-fleet.url = "github:qskkk/git-fleet";
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
+    moza.url = "github:computerdane/moza-racing-wheel-nix";
 
     darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -28,6 +29,7 @@
       nixvim,
       git-fleet,
       zen-browser,
+      moza,
       ...
     }:
     let
@@ -100,6 +102,7 @@
             secrets
             git-fleet
             zen-browser
+            moza
             ;
           nixPath = nixPathLinux;
         };
@@ -110,6 +113,7 @@
             {
               environment.systemPackages = [
                 git-fleet.packages.x86_64-linux.default
+                moza.packages.x86_64-linux.boxflat
               ];
             }
           )
