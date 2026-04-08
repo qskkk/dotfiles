@@ -96,10 +96,10 @@ in
       git-fleet.packages.x86_64-linux.default
       zen-browser.packages.x86_64-linux.default
       pkgs.discord
-      pkgs.warp-terminal
     ] ++ (with pkgs; [
       zed-editor
       claude-code
+      warp-terminal
 
       # GO tools
       customPkgs.go-1_26  # Go 1.26 from source

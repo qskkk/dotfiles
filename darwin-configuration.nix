@@ -62,7 +62,6 @@ in
 
     casks = [
       "orbstack"
-      "warp"
       "zed"
     ];
   };
