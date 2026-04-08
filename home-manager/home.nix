@@ -95,6 +95,7 @@ in
       zen-browser
     ] ++ (with pkgs; [
       zed-editor
+      claude-code
 
       # GO tools
       customPkgs.go-1_26  # Go 1.26 from source
