@@ -156,10 +156,7 @@ in
     capSysAdmin = true;
   };
 
-  # Moza sim racing — force feedback driver + udev rules
-  boot.extraModulePackages = [
-    (config.boot.kernelPackages.callPackage "${moza}/universal-pidff/universal-pidff.nix" {})
-  ];
+  # Moza sim racing — udev rules (universal-pidff driver is built into kernel 6.15+)
   services.udev.extraRules = ''
     SUBSYSTEM=="tty", KERNEL=="ttyACM*", ATTRS{idVendor}=="346e", ACTION=="add", MODE="0666", TAG+="uaccess"
   '';
