@@ -110,8 +110,9 @@ lib.mkIf pkgs.stdenv.isLinux {
         "$mod SHIFT, K, movewindow, u"
         "$mod SHIFT, L, movewindow, r"
 
-        # Fullscreen (alt+shift-0)
+        # Fullscreen
         "$mod SHIFT, 0, fullscreen, 0"
+        "Mod3, U, fullscreen, 0"  # Hyper+U (Caps Lock remapped to Hyper)
 
         # Workspace navigation (matching Aerospace names → numbers)
         # 1=social 2=spec 3=obs 4=code 5=notes 6=perso 7=browser 8=terminal 9=db 10=claude
