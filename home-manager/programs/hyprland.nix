@@ -84,6 +84,7 @@ lib.mkIf pkgs.stdenv.isLinux {
       input = {
         kb_layout = "us";
         kb_variant = "dvorak";
+        kb_options = "caps:hyper";  # Caps Lock → Hyper key
         follow_mouse = 1;
         sensitivity = 0;
       };
@@ -164,6 +165,19 @@ lib.mkIf pkgs.stdenv.isLinux {
         "CTRL ALT SHIFT, LEFT, movecurrentworkspacetomonitor, l"
         "CTRL ALT SHIFT, UP, movecurrentworkspacetomonitor, u"
         "CTRL ALT SHIFT, DOWN, movecurrentworkspacetomonitor, d"
+
+        # Mac-like keybindings (Super = Cmd)
+        "SUPER, C, exec, wl-copy"          # Copy
+        "SUPER, V, exec, wl-paste"         # Paste
+        "SUPER, Z, exec, wtype -M ctrl z"  # Undo
+        "SUPER, X, exec, wtype -M ctrl x"  # Cut
+        "SUPER, A, exec, wtype -M ctrl a"  # Select all
+        "SUPER, S, exec, wtype -M ctrl s"  # Save
+        "SUPER, F, exec, wtype -M ctrl f"  # Find
+        "SUPER, W, exec, wtype -M ctrl w"  # Close tab
+        "SUPER, T, exec, wtype -M ctrl t"  # New tab
+        "SUPER, R, exec, wtype -M ctrl r"  # Refresh
+        "SUPER SHIFT, Z, exec, wtype -M ctrl -M shift z"  # Redo
       ];
 
       # Mouse bindings
@@ -288,6 +302,8 @@ lib.mkIf pkgs.stdenv.isLinux {
   home.packages = with pkgs; [
     hyprpaper       # wallpaper
     wl-clipboard    # clipboard
+    wtype           # keyboard input simulation (for Mac-like bindings)
+    wofi            # app launcher
     grim            # screenshots
     slurp           # area selection
     pavucontrol     # audio GUI

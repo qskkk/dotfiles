@@ -54,6 +54,7 @@ in
       fd # A simple, fast and user-friendly alternative to 'find'
       yazi # Yet Another Zsh Interface
       bat # A cat clone with wings
+      eza # Modern ls replacement
       ripgrep # A line-oriented search tool that recursively searches your current directory for a regex pattern
       helix # Modern modal text editor
       lazygit
