@@ -174,20 +174,20 @@ lib.mkIf pkgs.stdenv.isLinux {
 
       # Window rules (matching Aerospace on-window-detected)
       windowrule = [
-        "class:(Slack), workspace:1"
-        "class:(discord), workspace:1"
-        "class:(thunderbird), workspace:1"
-        "class:(Linear), workspace:2"
-        "class:(Code), workspace:4"
-        "class:(jetbrains-goland), workspace:4"
-        "class:(dev.zed.Zed), workspace:4"
-        "class:(notion), workspace:5"
-        "class:(firefox), workspace:7"
-        "class:(zen), workspace:7"
-        "class:(google-chrome), workspace:7"
-        "class:(kitty), workspace:8"
-        "class:(DBeaver), workspace:9"
-        "class:(claude), workspace:10"
+        "match:class Slack, workspace 1"
+        "match:class discord, workspace 1"
+        "match:class thunderbird, workspace 1"
+        "match:class Linear, workspace 2"
+        "match:class Code, workspace 4"
+        "match:class jetbrains-goland, workspace 4"
+        "match:class dev.zed.Zed, workspace 4"
+        "match:class notion, workspace 5"
+        "match:class firefox, workspace 7"
+        "match:class zen, workspace 7"
+        "match:class google-chrome, workspace 7"
+        "match:class kitty, workspace 8"
+        "match:class DBeaver, workspace 9"
+        "match:class claude, workspace 10"
       ];
     };
   };
