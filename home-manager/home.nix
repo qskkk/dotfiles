@@ -94,6 +94,7 @@ in
     ] ++ lib.optionals pkgs.stdenv.isLinux [
       git-fleet.packages.x86_64-linux.default
       zen-browser.packages.x86_64-linux.default
+      discord
     ] ++ (with pkgs; [
       zed-editor
       claude-code
