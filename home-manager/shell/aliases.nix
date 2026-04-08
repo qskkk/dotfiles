@@ -176,11 +176,11 @@
 
       # Generate sscall function with all projects
       sscallProjects = builtins.map (proj: "cd ${workspace}/${proj} && dcud") projects;
-      sscallCmd = builtins.concatStringsSep " && " sscallProjects + " && cd -";
+      sscallCmd = if projects == [ ] then "echo 'No projects configured'" else builtins.concatStringsSep " && " sscallProjects + " && cd -";
 
       # Generate ssdall function with all projects
       ssdallProjects = builtins.map (proj: "cd ${workspace}/${proj} && dcd") projects;
-      ssdallCmd = builtins.concatStringsSep " && " ssdallProjects + " && cd -";
+      ssdallCmd = if projects == [ ] then "echo 'No projects configured'" else builtins.concatStringsSep " && " ssdallProjects + " && cd -";
     in
     ''
       dlog () { docker logs -f $1; }
