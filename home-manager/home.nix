@@ -92,6 +92,8 @@ in
       git-fleet.packages.aarch64-darwin.default
     ] ++ lib.optionals pkgs.stdenv.isLinux [
       git-fleet.packages.x86_64-linux.default
+      zen-browser
+      zed-editor
     ] ++ (with pkgs; [
 
       # GO tools
