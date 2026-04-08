@@ -9,6 +9,7 @@
   nixPath,
   secrets,
   git-fleet,
+  zen-browser ? null,
   ...
 }:
 
@@ -92,7 +93,7 @@ in
       git-fleet.packages.aarch64-darwin.default
     ] ++ lib.optionals pkgs.stdenv.isLinux [
       git-fleet.packages.x86_64-linux.default
-      zen-browser
+      zen-browser.packages.x86_64-linux.default
     ] ++ (with pkgs; [
       zed-editor
       claude-code
