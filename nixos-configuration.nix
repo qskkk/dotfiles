@@ -159,6 +159,9 @@ in
   # Moza sim racing — udev rules (universal-pidff driver is built into kernel 6.15+)
   services.udev.extraRules = ''
     SUBSYSTEM=="tty", KERNEL=="ttyACM*", ATTRS{idVendor}=="346e", ACTION=="add", MODE="0666", TAG+="uaccess"
+    SUBSYSTEM=="hidraw", ATTRS{idVendor}=="346e", MODE="0666", TAG+="uaccess"
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="346e", MODE="0666", TAG+="uaccess"
+    SUBSYSTEM=="input", ATTRS{idVendor}=="346e", MODE="0666", TAG+="uaccess"
   '';
 
   # Steam
