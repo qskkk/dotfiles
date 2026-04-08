@@ -173,7 +173,7 @@ lib.mkIf pkgs.stdenv.isLinux {
       ];
 
       # Window rules (matching Aerospace on-window-detected)
-      windowrulev2 = [
+      windowrule = [
         "workspace 1, class:^(Slack)$"
         "workspace 1, class:^(discord)$"
         "workspace 1, class:^(thunderbird)$"
