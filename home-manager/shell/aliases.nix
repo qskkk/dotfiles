@@ -154,9 +154,10 @@
     "ddb" = "cd $WORKSPACE/databases && dcud && cd -";
     "sshk" =
       let
-        sshKeyCommands = builtins.map (key: "ssh-add -k ~/.ssh/${key}") (secrets.sshKeys or [ ]);
+        keys = secrets.sshKeys or [ ];
+        sshKeyCommands = builtins.map (key: "ssh-add -k ~/.ssh/${key}") keys;
       in
-      builtins.concatStringsSep " && " sshKeyCommands;
+      if keys == [ ] then "echo 'No SSH keys configured'" else builtins.concatStringsSep " && " sshKeyCommands;
     "sshdid" = "ssh ${secrets.servers.prod or "user@your-server"}";
     "logj" = "dlogj $(basename \"$PWD\")";
     "log" = "dlog $(basename \"$PWD\")";
