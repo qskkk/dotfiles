@@ -169,6 +169,7 @@ in
   console.keyMap = "dvorak";            # TTY/console
   services.xserver.xkb.layout = "us";  # Xwayland
   services.xserver.xkb.variant = "dvorak";
+  services.libinput.enable = true;       # Mouse/touchpad/keyboard input
 
   # System state version
   system.stateVersion = "24.05";
