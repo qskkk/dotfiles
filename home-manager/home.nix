@@ -96,6 +96,7 @@ in
       git-fleet.packages.x86_64-linux.default
       zen-browser.packages.x86_64-linux.default
       pkgs.discord
+      pkgs.warp-terminal
     ] ++ (with pkgs; [
       zed-editor
       claude-code
