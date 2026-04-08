@@ -93,8 +93,8 @@ in
     ] ++ lib.optionals pkgs.stdenv.isLinux [
       git-fleet.packages.x86_64-linux.default
       zen-browser
-      zed-editor
     ] ++ (with pkgs; [
+      zed-editor
 
       # GO tools
       customPkgs.go-1_26  # Go 1.26 from source
