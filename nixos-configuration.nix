@@ -7,6 +7,7 @@
   username,
   secrets,
   git-fleet,
+  zen-browser,
   ...
 }:
 
@@ -65,6 +66,7 @@ in
       nixPath
       secrets
       git-fleet
+      zen-browser
       ;
   };
 
