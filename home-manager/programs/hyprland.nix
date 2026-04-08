@@ -309,5 +309,6 @@ lib.mkIf pkgs.stdenv.isLinux {
     slurp           # area selection
     pavucontrol     # audio GUI
     networkmanagerapplet
+    wev             # Wayland event viewer (debug keybindings)
   ];
 }
