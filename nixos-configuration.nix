@@ -177,8 +177,47 @@ in
   console.keyMap = "dvorak";            # TTY/console
   services.xserver.xkb.layout = "us";  # Xwayland
   services.xserver.xkb.variant = "dvorak";
-  services.xserver.xkb.options = "caps:hyper";  # Caps Lock → Hyper key
   services.libinput.enable = true;       # Mouse/touchpad/keyboard input
+
+  # Caps Lock → Hyper (Ctrl+Alt+Shift+Super) like Karabiner on macOS
+  services.keyd = {
+    enable = true;
+    keyboards.default = {
+      ids = [ "*" ];
+      settings.main = {
+        capslock = "overload(hyper, esc)";  # Hold = Hyper, Tap = Escape
+      };
+      settings.hyper = {
+        "u" = "C-A-S-M-u";
+        "h" = "C-A-S-M-h";
+        "j" = "C-A-S-M-j";
+        "k" = "C-A-S-M-k";
+        "l" = "C-A-S-M-l";
+        "1" = "C-A-S-M-1";
+        "2" = "C-A-S-M-2";
+        "3" = "C-A-S-M-3";
+        "4" = "C-A-S-M-4";
+        "5" = "C-A-S-M-5";
+        "6" = "C-A-S-M-6";
+        "7" = "C-A-S-M-7";
+        "8" = "C-A-S-M-8";
+        "9" = "C-A-S-M-9";
+        "0" = "C-A-S-M-0";
+        "s" = "C-A-S-M-s";
+        "d" = "C-A-S-M-d";
+        "a" = "C-A-S-M-a";
+        "w" = "C-A-S-M-w";
+        "b" = "C-A-S-M-b";
+        "q" = "C-A-S-M-q";
+        "return" = "C-A-S-M-return";
+        "space" = "C-A-S-M-space";
+        "right" = "C-A-S-M-right";
+        "left" = "C-A-S-M-left";
+        "up" = "C-A-S-M-up";
+        "down" = "C-A-S-M-down";
+      };
+    };
+  };
 
   # System state version
   system.stateVersion = "24.05";

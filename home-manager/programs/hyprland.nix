@@ -84,7 +84,7 @@ lib.mkIf pkgs.stdenv.isLinux {
       input = {
         kb_layout = "us";
         kb_variant = "dvorak";
-        kb_options = "caps:hyper";  # Caps Lock → Hyper key
+        # Caps Lock remapping handled by keyd service
         follow_mouse = 1;
         sensitivity = 0;
       };
@@ -112,7 +112,7 @@ lib.mkIf pkgs.stdenv.isLinux {
 
         # Fullscreen
         "$mod SHIFT, 0, fullscreen, 0"
-        "Mod3, U, fullscreen, 0"  # Hyper+U (Caps Lock remapped to Hyper)
+        "CTRL ALT SHIFT SUPER, U, fullscreen, 0"  # Hyper (Caps Lock via keyd)
 
         # Workspace navigation (matching Aerospace names → numbers)
         # 1=social 2=spec 3=obs 4=code 5=notes 6=perso 7=browser 8=terminal 9=db 10=claude
