@@ -37,6 +37,8 @@ lib.mkIf pkgs.stdenv.isLinux {
       exec-once = [
         "waybar"
         "hyprpaper"
+        "nm-applet --indicator"  # WiFi/network tray icon
+        "blueman-applet"         # Bluetooth tray icon
       ];
 
       # General
