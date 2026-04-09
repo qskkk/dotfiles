@@ -166,6 +166,10 @@ in
   hardware.bluetooth.powerOnBoot = true;
   services.blueman.enable = true;  # Bluetooth GUI manager
 
+  # Firmware (needed for Bluetooth, WiFi, etc.)
+  hardware.enableRedistributableFirmware = true;
+  hardware.firmware = [ pkgs.linux-firmware ];
+
   # Docker
   virtualisation.docker.enable = true;
 
