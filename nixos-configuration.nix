@@ -104,7 +104,7 @@ in
   systemd.services.NetworkManager-wait-online.enable = false;
 
   # Static IP (optional, set in secrets.nix)
-  networking.interfaces."${secrets.nixosInterface or "enp5s0"}" = lib.mkIf (secrets ? nixosStaticIp) {
+  networking.interfaces."${secrets.nixosInterface or "enp12s0"}" = lib.mkIf (secrets ? nixosStaticIp) {
     ipv4.addresses = [{
       address = secrets.nixosStaticIp;
       prefixLength = 24;
