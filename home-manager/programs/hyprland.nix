@@ -39,6 +39,8 @@ lib.mkIf pkgs.stdenv.isLinux {
         "hyprpaper"
         "nm-applet --indicator"  # WiFi/network tray icon
         "blueman-applet"         # Bluetooth tray icon
+        "noisetorch -i"          # Auto-load noise cancellation on default mic
+        "discord"
       ];
 
       # General
