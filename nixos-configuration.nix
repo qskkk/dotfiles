@@ -198,6 +198,12 @@ in
     capSysAdmin = true;
   };
 
+  # Firewall — extra ports for Moonlight/Sunshine streaming
+  networking.firewall = {
+    allowedTCPPorts = [ 47984 47989 47990 48010 ];
+    allowedUDPPortRanges = [{ from = 47998; to = 48000; } { from = 8000; to = 8010; }];
+  };
+
   # Moza sim racing — udev rules (universal-pidff driver is built into kernel 6.15+)
   services.udev.extraRules = ''
     SUBSYSTEM=="tty", KERNEL=="ttyACM*", ATTRS{idVendor}=="346e", ACTION=="add", MODE="0666", TAG+="uaccess"
