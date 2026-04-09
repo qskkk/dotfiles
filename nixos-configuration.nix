@@ -166,10 +166,11 @@ in
     ];
   };
 
-  # Bluetooth
+  # Bluetooth (MediaTek MT7925 on ASUS ProArt X870E)
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
   services.blueman.enable = true;  # Bluetooth GUI manager
+  boot.kernelParams = [ "usb-storage.quirks=0e8d:7925:u" ];
 
   # Firmware (needed for Bluetooth, WiFi, etc.)
   hardware.enableRedistributableFirmware = true;
