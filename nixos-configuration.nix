@@ -133,31 +133,8 @@ in
     pulse.enable = true;
   };
 
-  # Noise cancellation for microphones (Yeti / Rode)
-  # Creates a virtual "Noise Canceled" source in PipeWire
-  # Select it as input in Discord
-  services.pipewire.extraConfig.pipewire-pulse."99-noise-cancellation" = {
-    "context.modules" = [
-      {
-        name = "libpipewire-module-echo-cancel";
-        args = {
-          "library.name" = "aec/libspa-aec-webrtc";
-          "node.name" = "noise_canceled_source";
-          "node.description" = "Noise Canceled Mic";
-          "audio.rate" = 48000;
-          "audio.channels" = 1;
-          "source.props" = {
-            "node.name" = "noise_canceled_source";
-            "node.description" = "Noise Canceled Mic";
-          };
-          "sink.props" = {
-            "node.name" = "noise_canceled_sink";
-            "node.description" = "Noise Cancel Sink";
-          };
-        };
-      }
-    ];
-  };
+  # Noise cancellation for microphones (Yeti / Rode) — uses RNNoise
+  programs.noisetorch.enable = true;
 
   # Bluetooth (MediaTek MT7925 on ASUS ProArt X870E)
   hardware.bluetooth.enable = true;
