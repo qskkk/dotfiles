@@ -46,6 +46,8 @@ in
     curl
     os-prober  # detect Windows for GRUB dual-boot
     ntfs3g     # mount Windows NTFS partitions
+    usbutils   # lsusb
+    pciutils   # lspci
   ];
 
   # Fonts
