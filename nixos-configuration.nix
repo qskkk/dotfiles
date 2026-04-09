@@ -100,6 +100,16 @@ in
   networking.hostName = secrets.nixosDesktopMachineName or "nixos-desktop";
   networking.networkmanager.enable = true;
 
+  # Static IP (optional, set in secrets.nix)
+  networking.interfaces."${secrets.nixosInterface or "enp5s0"}" = lib.mkIf (secrets ? nixosStaticIp) {
+    ipv4.addresses = [{
+      address = secrets.nixosStaticIp;
+      prefixLength = 24;
+    }];
+  };
+  networking.defaultGateway = lib.mkIf (secrets ? nixosStaticIp) (secrets.nixosGateway or "192.168.1.1");
+  networking.nameservers = lib.mkIf (secrets ? nixosStaticIp) [ "1.1.1.1" "8.8.8.8" ];
+
   # Hyprland
   programs.hyprland = {
     enable = true;
