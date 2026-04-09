@@ -105,15 +105,8 @@ in
   # Disable wait-online (slows boot on desktop)
   systemd.services.NetworkManager-wait-online.enable = false;
 
-  # Static IP (optional, set in secrets.nix)
-  networking.interfaces."${secrets.nixosInterface or "enp12s0"}" = lib.mkIf (secrets ? nixosStaticIp) {
-    ipv4.addresses = [{
-      address = secrets.nixosStaticIp;
-      prefixLength = 24;
-    }];
-  };
-  networking.defaultGateway = lib.mkIf (secrets ? nixosStaticIp) (secrets.nixosGateway or "192.168.1.1");
-  networking.nameservers = lib.mkIf (secrets ? nixosStaticIp) [ "1.1.1.1" "8.8.8.8" ];
+  # Static IP — configure via NetworkManager instead of declarative config
+  # to avoid conflicts. Use `nmtui` or `nmcli` to set a static IP.
 
   # Hyprland
   programs.hyprland = {
