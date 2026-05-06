@@ -93,12 +93,19 @@ in
     ] ++ (with pkgs; [
 
       # GO tools
-      customPkgs.go-1_26  # Go 1.26 from source
+      go_1_26
       customPkgs.tuios    # TUI for managing iOS devices
       golangci-lint
       gopls
       graphviz
       jetbrains.goland
+
+      # Rust tools
+      rustc
+      cargo
+      clippy
+      rustfmt
+      rust-analyzer
 
       #softs
       # orca-slicer
@@ -107,8 +114,8 @@ in
       # Language servers for development
       nil # Nix LSP
       nixfmt-rfc-style # Nix formatter
-      nodePackages.typescript-language-server
-      nodePackages.vscode-langservers-extracted
+      typescript-language-server
+      vscode-langservers-extracted
       python3Packages.python-lsp-server
 
       # others
@@ -119,6 +126,7 @@ in
 
     sessionPath = [
       "$HOME/go/bin"
+      "$HOME/.cargo/bin"
       "$HOME/.npm-global/bin"
       "$HOME/.yarn/bin"
       "$HOME/.config/yarn/global/node_modules/.bin"

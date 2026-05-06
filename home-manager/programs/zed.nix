@@ -46,6 +46,12 @@
       file_icons = true;
       git_status = true;
     };
+    # Open files listed as a vertical column on the left
+    outline_panel = {
+      dock = "left";
+      default_width = 240;
+      button = true;
+    };
     indent_guides = {
       enabled = true;
     };
@@ -72,10 +78,6 @@
     # Copilot / AI
     features = {
       inline_completion_provider = "copilot";
-    };
-    assistant = {
-      enabled = true;
-      version = "2";
     };
 
     # Extensions

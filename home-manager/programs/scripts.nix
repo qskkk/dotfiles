@@ -154,6 +154,31 @@
     executable = true;
   };
 
+  # Script to prune old Time Machine backups
+  home.file.".scripts/retention-time-machine.sh" = {
+    text = ''
+      #!/bin/bash
+      # retention-time-machine.sh
+      DAYS=60   # garde les 60 derniers jours (mets 30 pour 1 mois, 90 pour 3 mois)
+
+      CUTOFF=$(date -v-''${DAYS}d +%Y-%m-%d)
+      echo "Suppression des backups antérieurs au $CUTOFF"
+
+      tmutil listbackups | while read backup; do
+        # Extrait la date du chemin (format YYYY-MM-DD-HHMMSS)
+        snapshot=$(basename "$backup" .backup)
+        backup_date=$(echo "$snapshot" | cut -c1-10)
+        if [[ "$backup_date" < "$CUTOFF" ]]; then
+          # APFS Time Machine: backup path is <mount>/<timestamp>.backup/<timestamp>.backup
+          mount=$(dirname "$(dirname "$backup")")
+          echo "Suppression : $snapshot ($mount)"
+          sudo tmutil delete -d "$mount" -t "$snapshot"
+        fi
+      done
+    '';
+    executable = true;
+  };
+
   # Script to rebuild nix-darwin configuration
   home.file.".scripts/nbuild.sh" = {
     text = ''

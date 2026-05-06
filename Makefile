@@ -4,6 +4,21 @@ COLOR ?= pink
 switch:
 	sudo darwin-rebuild switch --flake ~/workspace/perso/dotfiles/. --impure
 
+update:
+	nix flake update
+
+update-nixpkgs:
+	nix flake update nixpkgs
+
+upgrade: update switch
+
+clean:
+	nix-collect-garbage -d
+	nix store optimise
+
+tm-prune:
+	~/.scripts/retention-time-machine.sh
+
 wall-pink:
 	@make sw WALLPAPER=pink.jpg COLOR=pink THEME=rose-pine-moon
 

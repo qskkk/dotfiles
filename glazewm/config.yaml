@@ -1,0 +1,274 @@
+# GlazeWM configuration — mirror of aerospace.toml
+# Place at: ~/.glzr/glazewm/config.yaml
+
+general:
+  focus_follows_cursor: false
+  cursor_follows_focus: false
+  toggle_workspace_on_refocus: true
+  startup_commands: []
+
+gaps:
+  inner_gap: "15px"
+  outer_gap:
+    top: "40px"
+    right: "20px"
+    bottom: "10px"
+    left: "20px"
+
+# ── Workspaces ──────────────────────────────────────────────────────
+# Monitor mapping:
+#   Built-in display  → display_index 0 (social, spec, obs)
+#   MAG271QX OLED     → display_index 1 (code, claude, notes, perso)
+#   BenQ GW2490E      → display_index 2 (browser, terminal, db)
+# Adjust display_index values to match your actual monitor order.
+
+workspaces:
+  - name: "social"
+    display_index: 0
+  - name: "spec"
+    display_index: 0
+  - name: "obs"
+    display_index: 0
+  - name: "code"
+    display_index: 1
+  - name: "claude"
+    display_index: 1
+  - name: "notes"
+    display_index: 1
+  - name: "perso"
+    display_index: 1
+  - name: "browser"
+    display_index: 2
+  - name: "terminal"
+    display_index: 2
+  - name: "db"
+    display_index: 2
+
+# ── Window Rules ────────────────────────────────────────────────────
+# Process names are Windows executable names (without .exe).
+# Adjust if your installed apps use different process names.
+
+window_rules:
+  # Social workspace
+  - commands: ["move --workspace social"]
+    match:
+      - window_process: { equals: "slack" }
+  - commands: ["move --workspace social"]
+    match:
+      - window_process: { equals: "Discord" }
+  - commands: ["move --workspace social"]
+    match:
+      - window_process: { equals: "OUTLOOK" }
+  - commands: ["move --workspace social"]
+    match:
+      - window_process: { equals: "ms-teams" }
+
+  # Spec workspace
+  - commands: ["move --workspace spec"]
+    match:
+      - window_process: { equals: "linear" }
+
+  # Code workspace
+  - commands: ["move --workspace code"]
+    match:
+      - window_process: { equals: "Code" }
+  - commands: ["move --workspace code"]
+    match:
+      - window_process: { equals: "webstorm64" }
+  - commands: ["move --workspace code"]
+    match:
+      - window_process: { equals: "goland64" }
+  - commands: ["move --workspace code"]
+    match:
+      - window_process: { equals: "zed" }
+
+  # Notes workspace
+  - commands: ["move --workspace notes"]
+    match:
+      - window_process: { equals: "Notion" }
+  - commands: ["move --workspace notes"]
+    match:
+      - window_process: { equals: "Obsidian" }
+
+  # Browser workspace
+  - commands: ["move --workspace browser"]
+    match:
+      - window_process: { equals: "chrome" }
+  - commands: ["move --workspace browser"]
+    match:
+      - window_process: { equals: "Arc" }
+  - commands: ["move --workspace browser"]
+    match:
+      - window_process: { equals: "zen" }
+  - commands: ["move --workspace browser"]
+    match:
+      - window_process: { equals: "Dia" }
+  - commands: ["move --workspace browser"]
+    match:
+      - window_process: { equals: "msedge" }
+
+  # Terminal workspace
+  - commands: ["move --workspace terminal"]
+    match:
+      - window_process: { equals: "WindowsTerminal" }
+  - commands: ["move --workspace terminal"]
+    match:
+      - window_process: { equals: "wezterm-gui" }
+  - commands: ["move --workspace terminal"]
+    match:
+      - window_process: { equals: "kitty" }
+  - commands: ["move --workspace terminal"]
+    match:
+      - window_process: { equals: "Warp" }
+
+  # DB workspace
+  - commands: ["move --workspace db"]
+    match:
+      - window_process: { equals: "dbeaver" }
+  - commands: ["move --workspace db"]
+    match:
+      - window_process: { equals: "Postman" }
+
+  # Perso workspace
+  - commands: ["move --workspace perso"]
+    match:
+      - window_process: { equals: "orca-slicer" }
+  - commands: ["move --workspace perso"]
+    match:
+      - window_process: { equals: "Fusion360" }
+
+  # Claude workspace
+  - commands: ["move --workspace claude"]
+    match:
+      - window_process: { equals: "claude" }
+
+  # Ignore system tray / status bar apps
+  - commands: ["ignore"]
+    match:
+      - window_process: { equals: "zebar" }
+  - commands: ["ignore"]
+    match:
+      - window_process: { equals: "SearchHost" }
+
+# ── Keybindings ─────────────────────────────────────────────────────
+
+keybindings:
+  # -- Focus (alt + hjkl) --
+  - commands: ["focus --direction left"]
+    bindings: ["alt+h"]
+  - commands: ["focus --direction down"]
+    bindings: ["alt+j"]
+  - commands: ["focus --direction up"]
+    bindings: ["alt+k"]
+  - commands: ["focus --direction right"]
+    bindings: ["alt+l"]
+
+  # -- Move window (alt+shift + hjkl) --
+  - commands: ["move --direction left"]
+    bindings: ["alt+shift+h"]
+  - commands: ["move --direction down"]
+    bindings: ["alt+shift+j"]
+  - commands: ["move --direction up"]
+    bindings: ["alt+shift+k"]
+  - commands: ["move --direction right"]
+    bindings: ["alt+shift+l"]
+
+  # -- Fullscreen --
+  - commands: ["toggle-fullscreen"]
+    bindings: ["alt+shift+0"]
+  - commands: ["toggle-fullscreen"]
+    bindings: ["ctrl+alt+lwin+shift+f"]
+
+  # -- Workspace focus (numbers) --
+  - commands: ["focus --workspace social"]
+    bindings: ["alt+1"]
+  - commands: ["focus --workspace spec"]
+    bindings: ["alt+2"]
+  - commands: ["focus --workspace obs"]
+    bindings: ["alt+3"]
+  - commands: ["focus --workspace code"]
+    bindings: ["alt+4"]
+  - commands: ["focus --workspace notes"]
+    bindings: ["alt+5"]
+  - commands: ["focus --workspace perso"]
+    bindings: ["alt+6"]
+  - commands: ["focus --workspace browser"]
+    bindings: ["alt+7"]
+  - commands: ["focus --workspace terminal"]
+    bindings: ["alt+8"]
+  - commands: ["focus --workspace db"]
+    bindings: ["alt+9"]
+  - commands: ["focus --workspace claude"]
+    bindings: ["alt+0"]
+
+  # -- Workspace focus (letters) --
+  - commands: ["focus --workspace social"]
+    bindings: ["alt+s"]
+  - commands: ["focus --workspace code"]
+    bindings: ["alt+d"]
+  - commands: ["focus --workspace browser"]
+    bindings: ["alt+a"]
+  - commands: ["focus --workspace terminal"]
+    bindings: ["alt+w"]
+  - commands: ["focus --workspace db"]
+    bindings: ["alt+b"]
+
+  # -- Move to workspace (numbers) --
+  - commands: ["move --workspace social"]
+    bindings: ["alt+shift+1"]
+  - commands: ["move --workspace spec"]
+    bindings: ["alt+shift+2"]
+  - commands: ["move --workspace obs"]
+    bindings: ["alt+shift+3"]
+  - commands: ["move --workspace code"]
+    bindings: ["alt+shift+4"]
+  - commands: ["move --workspace notes"]
+    bindings: ["alt+shift+5"]
+  - commands: ["move --workspace perso"]
+    bindings: ["alt+shift+6"]
+  - commands: ["move --workspace browser"]
+    bindings: ["alt+shift+7"]
+  - commands: ["move --workspace terminal"]
+    bindings: ["alt+shift+8"]
+  - commands: ["move --workspace db"]
+    bindings: ["alt+shift+9"]
+
+  # -- Move to workspace (letters) --
+  - commands: ["move --workspace social"]
+    bindings: ["alt+shift+s"]
+  - commands: ["move --workspace spec"]
+    bindings: ["alt+shift+d"]
+  - commands: ["move --workspace obs"]
+    bindings: ["alt+shift+a"]
+  - commands: ["move --workspace code"]
+    bindings: ["alt+shift+w"]
+  - commands: ["move --workspace notes"]
+    bindings: ["alt+shift+b"]
+
+  # -- Move to adjacent monitor --
+  - commands: ["move --workspace next", "focus --workspace next"]
+    bindings: ["ctrl+alt+lwin+shift+right"]
+  - commands: ["move --workspace prev", "focus --workspace prev"]
+    bindings: ["ctrl+alt+lwin+shift+left"]
+
+  # -- Toggle floating / tiling --
+  - commands: ["toggle-floating"]
+    bindings: ["alt+shift+space"]
+
+  # -- Toggle tiling direction (horizontal / vertical) --
+  - commands: ["toggle-tiling-direction"]
+    bindings: ["alt+oem_2"]  # alt + /
+
+  # -- Resize --
+  - commands: ["resize --width +50px --height +50px"]
+    bindings: ["alt+shift+oem_plus"]  # alt+shift+=
+  - commands: ["resize --width -50px --height -50px"]
+    bindings: ["alt+shift+oem_minus"]  # alt+shift+-
+
+  # -- Utility --
+  - commands: ["wm-reload-config"]
+    bindings: ["alt+shift+r"]
+  - commands: ["close"]
+    bindings: ["alt+shift+q"]
+  - commands: ["wm-exit"]
+    bindings: ["alt+shift+e"]

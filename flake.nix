@@ -74,9 +74,6 @@
               nixpkgs.overlays = [
                 (final: prev: {
                   nodejs = prev.nodejs_22;
-                  nodePackages = prev.nodePackages.override {
-                    nodejs = prev.nodejs_22;
-                  };
                 })
               ];
 

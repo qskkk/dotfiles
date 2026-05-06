@@ -169,6 +169,10 @@ in
       if.app-id = 'notion.id'
       run = 'move-node-to-workspace notes'
 
+      [[on-window-detected]]
+      if.app-id = 'md.obsidian'
+      run = 'move-node-to-workspace notes'
+
       # Arc Developer Tools - force tiling (must be before general Arc rule)
       [[on-window-detected]]
       if.app-id = 'company.thebrowser.Browser'
