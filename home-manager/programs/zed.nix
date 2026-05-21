@@ -56,8 +56,10 @@
     # Terminal
     terminal = {
       shell = {
-        program = "zsh";
-        args = [ "-l" ];
+        with_arguments = {
+          program = "zsh";
+          args = [ "-l" ];
+        };
       };
       font_family = "Hack Nerd Font Mono";
       font_size = 14;
@@ -70,12 +72,24 @@
     };
 
     # Copilot / AI
-    features = {
-      inline_completion_provider = "copilot";
+    edit_predictions = {
+      provider = "copilot";
     };
-    assistant = {
+    agent = {
       enabled = true;
-      version = "2";
+      dock = "right";
+    };
+
+    # Claude Agent (ACP) — https://zed.dev/docs/ai/external-agents#claude-agent
+    agent_servers = {
+      claude-acp = {
+        type = "registry";
+      };
+    };
+
+    # Panels — folder on the left, agent on the right
+    project_panel = {
+      dock = "left";
     };
 
     # Extensions
@@ -176,6 +190,10 @@
         "cmd-shift-e" = "workspace::ToggleLeftDock";
         "cmd-shift-f" = "pane::DeploySearch";
         "shift shift" = "file_finder::Toggle";
+        "cmd-alt-c" = [
+          "agent::NewExternalAgentThread"
+          { agent = { custom = { name = "claude-acp"; }; }; }
+        ];
       };
     }
     {

@@ -10,6 +10,7 @@
   secrets,
   git-fleet,
   zen-browser ? null,
+  isServer ? false,
   ...
 }:
 
@@ -94,12 +95,15 @@ in
       git-fleet.packages.aarch64-darwin.default
     ] ++ lib.optionals pkgs.stdenv.isLinux [
       git-fleet.packages.x86_64-linux.default
+    ] ++ lib.optionals (pkgs.stdenv.isLinux && !isServer) [
       zen-browser.packages.x86_64-linux.default
       pkgs.discord
-    ] ++ (with pkgs; [
+    ] ++ lib.optionals (!isServer) (with pkgs; [
+      # GUI apps — skipped on headless server
       zed-editor
-      claude-code
       warp-terminal
+    ]) ++ (with pkgs; [
+      claude-code
 
       # GO tools
       customPkgs.go-1_26  # Go 1.26 from source
@@ -107,6 +111,13 @@ in
       gopls
       graphviz
       # jetbrains.goland
+
+      # Rust toolchain
+      rustc
+      cargo
+      clippy
+      rustfmt
+      rust-analyzer
 
       #softs
       # orca-slicer

@@ -2,111 +2,37 @@
   config,
   pkgs,
   lib,
-  nix-colors,
-  nixvim,
   username,
   secrets,
-  git-fleet,
   zen-browser,
   moza,
   ...
 }:
 
-let
-  homeDirectory = "/home/${username}";
-  nixPath = secrets.nixosDotfilesPath or (homeDirectory + "/dotfiles/");
-  wallpaperSource = nixPath + secrets.wallpaperPath;
-
-  nix-colors-lib = nix-colors.lib.contrib { inherit pkgs; };
-
-  colorScheme = nix-colors.colorSchemes.${secrets.theme};
-in
 {
   imports = [
+    ./nixos-common.nix
     ./hardware-configuration.nix
-    nix-colors.homeManagerModule
   ];
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+  # Desktop-specific home-manager args
+  home-manager.extraSpecialArgs.zen-browser = zen-browser;
 
-  # Enable experimental features
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  # Desktop-only user groups (merge with the base set in nixos-common.nix)
+  users.users."${username}".extraGroups = [ "video" "audio" ];
 
-  # Enable shells
-  programs.fish.enable = true;
-  programs.bash.enable = true;
-  programs.zsh.enable = true;
-
-  # System packages
+  # Desktop-specific system packages
   environment.systemPackages = with pkgs; [
-    git
-    vim
-    wget
-    curl
     os-prober  # detect Windows for GRUB dual-boot
     ntfs3g     # mount Windows NTFS partitions
     usbutils   # lsusb
     pciutils   # lspci
   ];
 
-  # Fonts
-  fonts.packages =
-    with pkgs;
-    [ ] ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
-
-  # Home Manager configuration
-  home-manager.useUserPackages = true;
-  home-manager.useGlobalPkgs = true;
-  home-manager.backupFileExtension = "backup";
-
-  home-manager.extraSpecialArgs = {
-    inherit
-      nix-colors
-      nixvim
-      username
-      colorScheme
-      nixPath
-      secrets
-      git-fleet
-      zen-browser
-      ;
-  };
-
-  home-manager.users."${username}" =
-    { lib, ... }:
-    {
-      fonts = {
-        fontconfig.enable = true;
-      };
-
-      imports = [
-        ./home-manager/home.nix
-      ];
-
-      home.sessionVariables.PATH = "$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:";
-    };
-
-  # User configuration
-  users.users."${username}" = {
-    isNormalUser = true;
-    home = homeDirectory;
-    extraGroups = [ "wheel" "networkmanager" "docker" "video" "audio" ];
-    shell = pkgs.zsh;
-  };
-
-  # Enable sudo for wheel group
-  security.sudo.wheelNeedsPassword = true;
-
-  # Networking
+  # Hostname
   networking.hostName = secrets.nixosDesktopMachineName or "nixos-desktop";
-  networking.networkmanager.enable = true;
 
-  # Disable wait-online (slows boot on desktop)
-  systemd.services.NetworkManager-wait-online.enable = false;
-
-  # Static IP — configure via NetworkManager instead of declarative config
-  # to avoid conflicts. Use `nmtui` or `nmcli` to set a static IP.
+  # Static IP — configure via NetworkManager (`nmtui` / `nmcli`) to avoid conflicts.
 
   # Hyprland
   programs.hyprland = {
@@ -139,10 +65,10 @@ in
   # Bluetooth (MediaTek MT7925 on ASUS ProArt X870E)
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
-  services.blueman.enable = true;  # Bluetooth GUI manager
+  services.blueman.enable = true;
   boot.kernelParams = [ "usb-storage.quirks=0e8d:7925:u" ];
 
-  # Firmware (needed for Bluetooth, WiFi, etc.)
+  # Firmware (Bluetooth, WiFi, etc.)
   hardware.enableRedistributableFirmware = true;
   hardware.firmware = [ pkgs.linux-firmware ];
 
@@ -155,16 +81,16 @@ in
     modesetting.enable = true;
     open = true; # RTX 5080 (Blackwell) requires open kernel module
     nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.beta; # 5080 needs latest drivers
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
   };
 
   # GPU & Gaming
   hardware.graphics = {
     enable = true;
-    enable32Bit = true; # 32-bit support for Steam/Proton
+    enable32Bit = true; # Steam/Proton 32-bit
   };
 
-  # AMD Ryzen — CPU governor & microcode
+  # AMD Ryzen — CPU microcode
   hardware.cpu.amd.updateMicrocode = true;
 
   # Sunshine — game streaming server (Moonlight client on macOS)
@@ -177,7 +103,10 @@ in
   # Firewall — extra ports for Moonlight/Sunshine streaming
   networking.firewall = {
     allowedTCPPorts = [ 47984 47989 47990 48010 ];
-    allowedUDPPortRanges = [{ from = 47998; to = 48000; } { from = 8000; to = 8010; }];
+    allowedUDPPortRanges = [
+      { from = 47998; to = 48000; }
+      { from = 8000; to = 8010; }
+    ];
   };
 
   # Moza sim racing — udev rules (universal-pidff driver is built into kernel 6.15+)
@@ -195,16 +124,14 @@ in
   };
   programs.gamemode.enable = true;
 
-  # Timezone and locale
-  time.timeZone = "Europe/Paris";
-  time.hardwareClockInLocalTime = true; # Windows dual-boot compat
-  i18n.defaultLocale = "en_US.UTF-8";
+  # Windows dual-boot compat
+  time.hardwareClockInLocalTime = true;
 
   # Keyboard — Dvorak by default
-  console.keyMap = "dvorak";            # TTY/console
-  services.xserver.xkb.layout = "us";  # Xwayland
+  console.keyMap = "dvorak";
+  services.xserver.xkb.layout = "us";
   services.xserver.xkb.variant = "dvorak";
-  services.libinput.enable = true;       # Mouse/touchpad/keyboard input
+  services.libinput.enable = true;
 
   # Caps Lock → Hyper (Ctrl+Alt+Shift+Super) like Karabiner on macOS
   services.keyd = {
@@ -246,6 +173,6 @@ in
     };
   };
 
-  # System state version
+  # NixOS release version pinned for this host
   system.stateVersion = "24.05";
 }

@@ -76,6 +76,14 @@
                   nodePackages = prev.nodePackages.override {
                     nodejs = prev.nodejs_22;
                   };
+
+                  # Skip zed-editor's visual-tests build step which requires
+                  # the Apple `metal` shader compiler (not in the Nix sandbox).
+                  zed-editor = prev.zed-editor.overrideAttrs (old: {
+                    doCheck = false;
+                    checkType = "release";
+                    cargoTestFlags = [ ];
+                  });
                 })
               ];
 

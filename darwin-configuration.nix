@@ -84,6 +84,7 @@ in
       secrets
       git-fleet
       ;
+    isServer = false;
   };
   home-manager.users."${username}" =
     { lib, ... }:

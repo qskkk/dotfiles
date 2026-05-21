@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  isServer ? false,
   ...
 }:
 
@@ -9,7 +10,7 @@ let
   palette = config.colorScheme.palette;
 in
 
-lib.mkIf pkgs.stdenv.isLinux {
+lib.mkIf (pkgs.stdenv.isLinux && !isServer) {
   wayland.windowManager.hyprland = {
     enable = true;
 
