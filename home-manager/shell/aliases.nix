@@ -50,9 +50,6 @@
     "q" = "exit";
 
     # File operations
-    "cp" = "cp -i";
-    "mv" = "mv -i";
-    "rm" = "rm -i";
     "mkdir" = "mkdir -pv";
 
     # Network

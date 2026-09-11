@@ -2,7 +2,7 @@ WALLPAPER ?= 803.jpg
 COLOR ?= pink
 
 switch:
-	sudo darwin-rebuild switch --flake ~/workspace/perso/dotfiles/. --impure
+	sudo darwin-rebuild switch --flake path:$(HOME)/workspace/perso/dotfiles --impure
 
 update:
 	nix flake update

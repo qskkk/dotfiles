@@ -73,6 +73,9 @@
       # Load configuration from environment variables
       github_prefix="''${PRODC_GITHUB_PREFIX:-}"
       services_list="''${PRODC_SERVICES:-}"
+      # Monorepo: every service now lives in a single repo and is tagged
+      # "<service>/v*". Defaults to "backend" (github.com/japhy-team/backend).
+      monorepo="''${PRODC_MONOREPO:-backend}"
 
       if [ -z "$github_prefix" ]; then
         echo "Error: PRODC_GITHUB_PREFIX environment variable is not set"
@@ -124,18 +127,51 @@
 
       for repo in "''${!environments[@]}"; do
           env_name=''${environments[$repo]}
-          version=$(gum spin --spinner monkey --show-output --title "Fetching production version for $repo ..." -- aws elasticbeanstalk describe-environments --environment-names $env_name --query "Environments[0].VersionLabel" --output text)
-          latest_tag=$(gum spin --spinner monkey --show-output --title "Fetching latest tag for $repo ..." -- git ls-remote --tags --sort=-v:refname "''${github_prefix}''${repo}.git" | head -n1 | sed 's/.*refs\/tags\///' | sed 's/\^{}//' || echo "main")
-          prod_version="''${version#production_}"
-          url="''${github_prefix}''${repo}/compare/''${prod_version}...''${latest_tag}"
 
-          if [ "$prod_version" != "$latest_tag" ]; then
-              echo "''${repo}: ''${url} (''${prod_version} -> ''${latest_tag})"
-              if [ $OPEN = "yes" ]; then
-                  open $url & disown
-              fi
+          # Currently deployed version, as reported by Elastic Beanstalk.
+          # In the monorepo the version_label is the plain "v<x.y.z>" (no
+          # "production_" prefix and no "<service>/" prefix). We still strip a
+          # legacy "production_" prefix and a stray "<service>/" prefix so the
+          # tool keeps working against envs that predate the monorepo deploy.
+          version=$(gum spin --spinner monkey --show-output --title "Fetching production version for $repo ..." -- aws elasticbeanstalk describe-environments --environment-names $env_name --query "Environments[0].VersionLabel" --output text)
+          prod_version="''${version#production_}"
+          prod_version="''${prod_version#$repo/}"
+
+          # In the monorepo, every service is tagged "<service>/v*" inside a
+          # single repo. Fetch that service's tags once, newest first.
+          all_tags=$(gum spin --spinner monkey --show-output --title "Fetching tags for $repo ..." -- git ls-remote --tags --sort=-v:refname "''${github_prefix}''${monorepo}.git" "refs/tags/$repo/v*" | sed 's#.*refs/tags/##' | sed 's/\^{}//')
+
+          if [ -z "$all_tags" ]; then
+              echo "''${repo}: no '$repo/v*' tag found in ''${monorepo} — skipping"
+              continue
+          fi
+
+          latest_tag=$(echo "$all_tags" | head -n1)        # e.g. marcus/v2.0.21
+          earliest_tag=$(echo "$all_tags" | tail -n1)      # e.g. marcus/v0.0.1
+          latest_version="''${latest_tag#$repo/}"          # e.g. v2.0.21
+
+          if [ "$prod_version" = "$latest_version" ]; then
+              echo "''${repo}: up to date (''${latest_version})"
+              continue
+          fi
+
+          # Build a compare URL whose refs actually resolve in the monorepo.
+          # Normal case: prod sits on a "<service>/<prod_version>" tag.
+          # Legacy case (e.g. owney/chase still on their pre-monorepo version):
+          # that tag does not exist, so we fall back to the service's earliest
+          # monorepo tag and flag it so the diff is read as approximate.
+          if echo "$all_tags" | grep -qx "$repo/$prod_version"; then
+              from_ref="$repo/$prod_version"
+              note=""
           else
-              echo "''${repo}: up to date (''${latest_tag})"
+              from_ref="$earliest_tag"
+              note=" [prod $prod_version predates the monorepo — diff from $earliest_tag]"
+          fi
+
+          url="''${github_prefix}''${monorepo}/compare/''${from_ref}...''${latest_tag}"
+          echo "''${repo}: ''${url} (''${prod_version} -> ''${latest_version})''${note}"
+          if [ $OPEN = "yes" ]; then
+              open $url & disown
           fi
       done
     '';

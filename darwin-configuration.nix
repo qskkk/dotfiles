@@ -33,6 +33,28 @@ in
 
   nixpkgs.config.allowUnfree = true;
 
+  nix = {
+    # Optimisation continue : hardlink les fichiers identiques à chaque build
+    optimise.automatic = true;
+
+    gc = {
+      automatic = true;
+      interval = {
+        Weekday = 0;
+        Hour = 3;
+        Minute = 0;
+      }; # dimanche 03:00
+      options = "--delete-older-than 7d";
+    };
+
+    # Empêche l'accumulation infinie de générations à chaque rebuild
+    settings = {
+      auto-optimise-store = true;
+      min-free = 5 * 1024 * 1024 * 1024; # 5 GB
+      max-free = 20 * 1024 * 1024 * 1024; # 20 GB
+    };
+  };
+
   programs.fish.enable = true;
   programs.bash.enable = true;
 
@@ -65,6 +87,7 @@ in
       "orbstack"
       "warp"
       "zed"
+      "zen"
     ];
   };
 

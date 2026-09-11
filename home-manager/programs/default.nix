@@ -20,5 +20,6 @@
     # ./nixvim.nix  # Removed - switching to Helix
     # ./claude.nix
     ./orbstack.nix
+    ./codex.nix
   ];
 }

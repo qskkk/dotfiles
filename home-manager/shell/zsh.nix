@@ -40,6 +40,7 @@
 
       # Prodc.sh configuration
       PRODC_GITHUB_PREFIX = secrets.prodcGithubPrefix or "eoeo";
+      PRODC_MONOREPO = secrets.prodcMonorepo or "backend";
       PRODC_SERVICES = secrets.prodcServices or "";
       PRODC_ENV_MARCUS = secrets.prodcEnvMarcus or "";
       PRODC_ENV_HACHIKO = secrets.prodcEnvHachiko or "";

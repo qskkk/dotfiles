@@ -65,6 +65,7 @@ in
       newman
       redis
       devenv
+      terraform
 
     ] ++ lib.optionals pkgs.stdenv.isDarwin [
       sketchybar
@@ -73,6 +74,7 @@ in
     ] ++ (with pkgs; [
       # Networking
       openssh
+      netbird
 
       # Archive tools
       unzip

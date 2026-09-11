@@ -185,7 +185,7 @@ in
       run = 'move-node-to-workspace browser'
 
       [[on-window-detected]]
-      if.app-id = 'io.zen.Zen'
+      if.app-id = 'app.zen-browser.zen'
       run = 'move-node-to-workspace browser'
 
       [[on-window-detected]]
@@ -229,6 +229,31 @@ in
       [[on-window-detected]]
       if.app-id = 'com.anthropic.claudefordesktop'
       run = 'move-node-to-workspace claude'
+
+      [[on-window-detected]]
+      if.app-id = 'com.openai.codex'
+      run = 'move-node-to-workspace claude'
+
+      # Steam: tile only the main window (always titled exactly "Steam");
+      # float every other Steam window — transient popups (dropdown menus,
+      # "friend is playing" notification toasts) flicker when tiled
+      [[on-window-detected]]
+      if.app-id = 'com.valvesoftware.steam'
+      if.window-title-regex-substring = '^Steam$'
+      run = 'layout tiling'
+
+      [[on-window-detected]]
+      if.app-id = 'com.valvesoftware.steam.helper'
+      if.window-title-regex-substring = '^Steam$'
+      run = 'layout tiling'
+
+      [[on-window-detected]]
+      if.app-id = 'com.valvesoftware.steam'
+      run = 'layout floating'
+
+      [[on-window-detected]]
+      if.app-id = 'com.valvesoftware.steam.helper'
+      run = 'layout floating'
 
       # Default rule for any window - set to tiling layout
       [[on-window-detected]]

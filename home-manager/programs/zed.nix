@@ -46,7 +46,13 @@
       file_icons = true;
       git_status = true;
     };
-    # Open files listed as a vertical column on the left
+    # File tree on the left (Zed's default flipped to right in a recent update)
+    project_panel = {
+      dock = "left";
+      default_width = 240;
+      button = true;
+    };
+    # Outline (symbols of current file) on the left too
     outline_panel = {
       dock = "left";
       default_width = 240;
@@ -62,8 +68,10 @@
     # Terminal
     terminal = {
       shell = {
-        program = "zsh";
-        args = [ "-l" ];
+        with_arguments = {
+          program = "zsh";
+          args = [ "-l" ];
+        };
       };
       font_family = "Hack Nerd Font Mono";
       font_size = 14;
@@ -157,6 +165,9 @@
 
     # Trust all projects by default
     project_trust = "always_trust";
+
+    # Always open a new window when launching from CLI (zed --classic)
+    cli_default_open_behavior = "new_window";
 
     # Use JetBrains keymap as base
     base_keymap = "JetBrains";
