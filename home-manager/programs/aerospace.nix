@@ -30,6 +30,13 @@ in
       # Mouse follows focus when enabled, this setting is 'false' by default
       # on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
+      # SketchyBar integration: refresh workspace items on every change
+      after-startup-command = ['exec-and-forget ${pkgs.sketchybar}/bin/sketchybar --trigger aerospace_workspace_change']
+      exec-on-workspace-change = ['/bin/bash', '-c',
+        '${pkgs.sketchybar}/bin/sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE'
+      ]
+      on-focus-changed = ['exec-and-forget ${pkgs.sketchybar}/bin/sketchybar --trigger aerospace_workspace_change']
+
       # You can effectively turn off macOS "Hide application" (cmd-h) and "Minimize" (cmd-m) shortcuts
       # by assigning them to 'service-disable' binding
       # This way, you can use 'cmd-h' and 'cmd-m' in AeroSpace bindings without conflicts
@@ -265,7 +272,7 @@ in
       inner.vertical = 15
       outer.left = 20
       outer.bottom = 10
-      outer.top = 40
+      outer.top = 50 # bar: y_offset 6 + height 34, plus breathing room
       outer.right = 20
 
       # Workspace to monitor assignment (based on your display setup)
@@ -273,13 +280,13 @@ in
       social = 'Built-in Retina Display'
       spec = 'Built-in Retina Display'
       obs = 'Built-in Retina Display'
-      code = 'MAG271QX OLED'
+      code = 'BenQ GW2490E'
       claude = 'MAG271QX OLED'
-      notes = 'MAG271QX OLED'
-      perso = 'MAG271QX OLED'
-      browser = 'BenQ GW2490E'
-      terminal = 'BenQ GW2490E'
-      db = 'BenQ GW2490E'
+      notes = 'BenQ GW2490E'
+      perso = 'BenQ GW2490E'
+      browser = 'MAG271QX OLED'
+      terminal = 'MAG271QX OLED'
+      db = 'MAG271QX OLED'
     '';
     executable = false;
   };

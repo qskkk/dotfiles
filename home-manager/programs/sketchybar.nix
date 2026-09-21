@@ -8,729 +8,547 @@
 let
   palette = config.colorScheme.palette;
   toHex = c: "0xff${c}";
-  color_background = toHex palette.base00;
-  color_foreground = toHex palette.base05;
-  color_font = toHex palette.base05;
-  color_border = toHex palette.base03;
+  # Catppuccin naming on top of the base16 slots exposed by nix-colors
+  color_base = toHex palette.base00;
+  color_pill = "0xf0${palette.base00}"; # ~94% opaque pills
+  color_mantle = toHex palette.base01;
+  color_surface0 = toHex palette.base02;
+  color_surface1 = toHex palette.base03;
+  color_surface2 = toHex palette.base04;
+  color_text = toHex palette.base05;
+  color_lavender = toHex palette.base07;
   color_red = toHex palette.base08;
-  color_green = toHex palette.base0B;
-  color_blue = toHex palette.base0D;
+  color_peach = toHex palette.base09;
   color_yellow = toHex palette.base0A;
-  color_orange = toHex palette.base09;
-  color_purple = toHex palette.base0E;
-  color_pink = toHex palette.base0F;
+  color_green = toHex palette.base0B;
   color_teal = toHex palette.base0C;
-in
-{
-  # Install sketchybar
-  home.packages = with pkgs; [
-    sketchybar
+  color_blue = toHex palette.base0D;
+  color_mauve = toHex palette.base0E;
+  color_flamingo = toHex palette.base0F;
+
+  configDir = "${config.home.homeDirectory}/.config/sketchybar";
+  pluginDir = "${configDir}/plugins";
+
+  sketchybar = "${pkgs.sketchybar}/bin/sketchybar";
+  aerospace = "${pkgs.aerospace}/bin/aerospace";
+  iconMap = "${pkgs.sketchybar-app-font}/bin/icon_map.sh";
+
+  nerdFont = "Hack Nerd Font Mono";
+  labelFont = "Hack Nerd Font";
+  appFont = "sketchybar-app-font";
+
+  # Must match the workspaces declared in aerospace.nix
+  workspaces = [
+    {
+      name = "social";
+      icon = "󰍩";
+    }
+    {
+      name = "spec";
+      icon = "󱃔";
+    }
+    {
+      name = "obs";
+      icon = "󰄀";
+    }
+    {
+      name = "code";
+      icon = "󰅨";
+    }
+    {
+      name = "notes";
+      icon = "󱞎";
+    }
+    {
+      name = "perso";
+      icon = "󰋜";
+    }
+    {
+      name = "browser";
+      icon = "󰇧";
+    }
+    {
+      name = "terminal";
+      icon = "󰆍";
+    }
+    {
+      name = "db";
+      icon = "󰆼";
+    }
+    {
+      name = "claude";
+      icon = "󱚝";
+    }
   ];
 
-  # SketchyBar configuration
-  home.file.".config/sketchybar/sketchybarrc" = {
-    text = ''
-      #!/usr/bin/env bash
+  workspaceItems = lib.concatMapStringsSep "\n" (ws: ''
+    sketchybar --add item space.${ws.name} left \
+               --set space.${ws.name} icon="${ws.icon}" \
+                                      icon.color=$COLOR_SURFACE2 \
+                                      icon.padding_left=8 \
+                                      icon.padding_right=2 \
+                                      label="" \
+                                      label.font="${appFont}:Regular:15.0" \
+                                      label.color=$COLOR_SURFACE2 \
+                                      label.padding_left=2 \
+                                      label.padding_right=8 \
+                                      label.y_offset=-1 \
+                                      padding_left=2 \
+                                      padding_right=2 \
+                                      background.drawing=off \
+                                      background.color=$COLOR_SURFACE0 \
+                                      background.border_width=0 \
+                                      background.corner_radius=8 \
+                                      background.height=22 \
+                                      drawing=off \
+                                      click_script="${aerospace} workspace ${ws.name}"
+  '') workspaces;
 
-      # This is a demo config to showcase some of the most important commands.
-      # It is meant to be changed and configured, as it is intentionally kept sparse.
-      # For a (much) more advanced configuration example see my dotfiles:
-      # https://github.com/FelixKratz/dotfiles
+  workspaceNames = lib.concatMapStringsSep " " (ws: ws.name) workspaces;
 
-      # Ensure HOME is correctly set
+  colorsSh = ''
+    #!/usr/bin/env bash
+    # Catppuccin palette (from nix-colors)
+    export COLOR_BASE=${color_base}
+    export COLOR_PILL=${color_pill}
+    export COLOR_MANTLE=${color_mantle}
+    export COLOR_SURFACE0=${color_surface0}
+    export COLOR_SURFACE1=${color_surface1}
+    export COLOR_SURFACE2=${color_surface2}
+    export COLOR_TEXT=${color_text}
+    export COLOR_LAVENDER=${color_lavender}
+    export COLOR_RED=${color_red}
+    export COLOR_PEACH=${color_peach}
+    export COLOR_YELLOW=${color_yellow}
+    export COLOR_GREEN=${color_green}
+    export COLOR_TEAL=${color_teal}
+    export COLOR_BLUE=${color_blue}
+    export COLOR_MAUVE=${color_mauve}
+    export COLOR_FLAMINGO=${color_flamingo}
+  '';
 
-      CONFIG_DIR="${config.home.homeDirectory}/.config/sketchybar"
-      PLUGIN_DIR="$CONFIG_DIR/plugins"
-      NERD_FONT="Hack Nerd Font Mono"
+  iconsSh = ''
+    #!/usr/bin/env bash
+    # Nerd Font glyphs used by the bar
 
-      # Define colors from nix-colors palette
-      COLOR_BACKGROUND=${color_background}
-      COLOR_FONT=${color_font}
-      COLOR_BORDER=${color_border}
-      COLOR_YELLOW=${color_yellow}
-      COLOR_CYAN=${color_teal}
-      COLOR_MAGENTA=${color_purple}
-      COLOR_WHITE=${color_foreground}
-      COLOR_BLUE=${color_blue}
-      COLOR_RED=${color_red}
-      COLOR_GREEN=${color_green}
+    export ICON_APPLE=
+    export ICON_CLOCK=󰥔
+    export ICON_CPU=󰘚
+    export ICON_RAM=󰓅
+    export ICON_WIFI=󰖩
+    export ICON_WIFI_OFF=󰖪
+    export ICON_MUSIC=󰎄
+    export ICON_PAUSE=󰏤
 
-      # Define icons inline
-      ICONS_SPACE=("1" "2" "3" "4" "5" "6" "7" "8" "9")
+    export ICONS_VOLUME=(󰸈 󰕿 󰖀 󰕾)
 
-      # Try to source external files if they exist, but don't fail if they don't
-      if [ -f "$PLUGIN_DIR/assets/colors.sh" ]; then
-        source "$PLUGIN_DIR/assets/colors.sh"
-      fi
-      if [ -f "$PLUGIN_DIR/assets/icons.sh" ]; then
-        source "$PLUGIN_DIR/assets/icons.sh"
-      fi
+    export ICONS_BATTERY=(󰂎 󰁺 󰁻 󰁼 󰁽 󰁾 󰁿 󰂀 󰂁 󰂂 󰁹)
+    export ICONS_BATTERY_CHARGING=(󰢟 󰢜 󰂆 󰂇 󰂈 󰢝 󰂉 󰢞 󰂊 󰂋 󰂅)
+  '';
 
-      ##### Bar Appearance #####
-      # Configuring the general appearance of the bar.
-      # These are only some of the options available. For all options see:
-      # https://felixkratz.github.io/SketchyBar/config/bar
-      # If you are looking for other colors, see the color picker:
-      # https://felixkratz.github.io/SketchyBar/config/tricks#color-picker
-
-      sketchybar --bar position=top y_offset=4 height=40 color=0x00000000
-
-      ##### Changing Defaults #####
-      # We now change some default values, which are applied to all further items.
-      # For a full list of all available item properties see:
-      # https://felixkratz.github.io/SketchyBar/config/items
-
-      ##### Adding Mission Control Space Indicators #####
-      # Let's add some mission control spaces:
-      # https://felixkratz.github.io/SketchyBar/config/components#space----associate-mission-control-spaces-with-an-item
-      # to indicate active and available mission control spaces.
-
-      source "$PLUGIN_DIR/items.sh"
-
-      ##### Adding Left Items #####
-      # We add some regular items to the left side of the bar, where
-      # only the properties deviating from the current defaults need to be set
-
-      sketchybar --default padding_left=8                                    \
-                           padding_right=8                                   \
-                                                                             \
-                           background.border_color=$COLOR_BORDER       \
-                           background.border_width=2                         \
-                           background.height=40                              \
-                           background.corner_radius=12                       \
-                                                                             \
-                           icon.color=$COLOR_FONT                           \
-                           icon.highlight_color=$COLOR_BACKGROUND            \
-                           icon.padding_left=2                               \
-                           icon.padding_right=2                              \
-                           icon.font="$NERD_FONT:Regular:14.0"               \
-                           label.color=$COLOR_FONT                         \
-                           label.highlight_color=$COLOR_BACKGROUND           \
-                           label.padding_left=2                              \
-                           label.padding_right=2                             \
-                           label.font="$NERD_FONT:Regular:14.0"
-
-      # Register custom event - this will be use by sketchybar's space items as well as app_space.sh
-      sketchybar --add event window_change
-
-      # Space items
-      COLORS_SPACE=($COLOR_YELLOW $COLOR_CYAN $COLOR_MAGENTA $COLOR_WHITE $COLOR_BLUE $COLOR_RED $COLOR_GREEN $COLOR_YELLOW $COLOR_CYAN)
-      LENGTH=''${#ICONS_SPACE[@]}
-
-      for i in "''${!ICONS_SPACE[@]}"
-      do
-        sid=$(($i+1))
-        PAD_LEFT=2
-        PAD_RIGHT=3
-        if [[ $i == 0 ]]; then
-          PAD_LEFT=8
-        elif [[ $i == $(($LENGTH-1)) ]]; then
-          PAD_RIGHT=12
-        fi
-        sketchybar --add space space.$sid left                                       \
-                   --set       space.$sid script="$PLUGIN_DIR/app_space.sh"          \
-                                          associated_space=$sid                      \
-                                          padding_left=$PAD_LEFT                     \
-                                          padding_right=$PAD_RIGHT                   \
-                                          background.color=''${COLORS_SPACE[i]}        \
-                                          background.border_width=0                  \
-                                          background.corner_radius=8                 \
-                                          background.height=24                       \
-                                          icon=''${ICONS_SPACE[i]}                     \
-                                          icon.color=''${COLORS_SPACE[i]}              \
-                                          icon.font="CaskaydiaCove Nerd Font:Regular:23.0"  \
-                                          label="_"                                  \
-                                          label.color=''${COLORS_SPACE[i]}             \
-                                          click_script="yabai -m space --focus  $sid" \
-                   --subscribe space.$sid front_app_switched window_change
-      done
-
-      # Space bracket
-      sketchybar --add bracket spaces '/space\..*/'                      \
-                 --set         spaces background.color=$COLOR_BACKGROUND
-
-      ##### Adding Right Items #####
-      # In the same way as the left items we can add items to the right side.
-      # Additional position (e.g. center) are available, see:
-      # https://felixkratz.github.io/SketchyBar/config/items#adding-items-to-sketchybar
-
-      # Some items refresh on a fixed cycle, e.g. the clock runs its script once
-      # every 10s. Other items respond to events they subscribe to, e.g. the
-      # volume.sh script is only executed once an actual change in system audio
-      # volume is registered. More info about the event system can be found here:
-      # https://felixkratz.github.io/SketchyBar/config/events
-
-      render_items
-
-      sketchybar --add bracket right_items.bracket '/right_items\..*/'                      \
-                --set         right_items.bracket background.color=$COLOR_BACKGROUND
-
-      ##### Force all scripts to run the first time (never do this in a script) #####
-      sketchybar --update
-    '';
+  mkScript = text: {
+    inherit text;
     executable = true;
   };
+in
+{
+  home.file.".config/sketchybar/sketchybarrc" = mkScript ''
+    #!/usr/bin/env bash
+    # SketchyBar — Catppuccin Mocha, AeroSpace workspaces
 
-  home.file.".config/sketchybar/plugins/items.sh" = {
-    text = ''
-      #!/usr/bin/env bash
-      render_items() {
-        PLUGIN_DIR="${config.home.homeDirectory}/.config/sketchybar/plugins"
+    PLUGIN_DIR="${pluginDir}"
+    source "$PLUGIN_DIR/assets/colors.sh"
+    source "$PLUGIN_DIR/assets/icons.sh"
 
-        source "$PLUGIN_DIR/assets/colors.sh"
-        source "$PLUGIN_DIR/assets/icons.sh"
+    ##### Bar #####
+    sketchybar --bar position=top \
+                     height=34 \
+                     y_offset=6 \
+                     margin=14 \
+                     padding_left=8 \
+                     padding_right=8 \
+                     color=0x00000000 \
+                     sticky=on \
+                     topmost=window
 
-        NERD_FONT="Hack Nerd Font Mono"
+    ##### Defaults #####
+    sketchybar --default padding_left=4 \
+                         padding_right=4 \
+                         background.color=$COLOR_PILL \
+                         background.border_color=$COLOR_SURFACE1 \
+                         background.border_width=1 \
+                         background.corner_radius=10 \
+                         background.height=28 \
+                         icon.font="${nerdFont}:Regular:15.0" \
+                         icon.color=$COLOR_TEXT \
+                         icon.padding_left=8 \
+                         icon.padding_right=4 \
+                         label.font="${labelFont}:Bold:13.0" \
+                         label.color=$COLOR_TEXT \
+                         label.padding_left=4 \
+                         label.padding_right=8
 
-        sketchybar --add item right_items.clock right \
-                  --set right_items.clock update_freq=10 \
-                                icon=󰥔  \
-                                script="$PLUGIN_DIR/clock.sh" \
-                                click_script="open -a Calendar"
+    ##### Events #####
+    sketchybar --add event aerospace_workspace_change
 
-          sketchybar --add item right_items.battery right \
-                    --set right_items.battery update_freq=120 \
-                                  script="$PLUGIN_DIR/battery.sh" \
-                                  icon=$ \
-                                  click_script="pmset -g batt | awk 'NR==2 {print $0}' | osascript -e 'display notification \"'$(cat -)'\" with title \"Batterie\"'" \
-                    --subscribe right_items.battery system_woke power_source_change
+    ##### Left: Apple logo #####
+    sketchybar --add item apple left \
+               --set apple icon="$ICON_APPLE" \
+                           icon.font="${nerdFont}:Regular:18.0" \
+                           icon.color=$COLOR_LAVENDER \
+                           icon.padding_left=10 \
+                           icon.padding_right=10 \
+                           label.drawing=off \
+                           click_script="open -a 'System Settings'"
 
-          sketchybar --add item right_items.volume right \
-                    --set right_items.volume script="$PLUGIN_DIR/volume.sh" \
-                                  icon=󰕾 \
-                                  click_script="open -a 'System Settings' && sleep 0.5 && osascript -e 'tell application \"System Settings\" to reveal pane id \"com.apple.preference.sound\"'" \
-                    --subscribe right_items.volume volume_change
+    ##### Left: AeroSpace workspaces #####
+    ${workspaceItems}
 
-        # CPU
-        sketchybar --add item right_items.cpu_percent right \
-          --set right_items.cpu_percent label=CPU% icon="$CPU" update_freq=15 mach_helper="$HELPER" script="$PLUGIN_DIR/stats/scripts/cpu.sh"
+    sketchybar --add bracket spaces '/space\..*/' \
+               --set spaces background.color=$COLOR_PILL \
+                            background.border_color=$COLOR_SURFACE1 \
+                            background.border_width=1 \
+                            background.corner_radius=10 \
+                            background.height=28
 
-        # Memory
-        sketchybar --add item right_items.memory right \
-          --set right_items.memory icon="$MEMORY" update_freq=15 script="$PLUGIN_DIR/stats/scripts/ram.sh"
+    # Single controller item: refreshes every workspace in one batched call
+    sketchybar --add item space_controller left \
+               --set space_controller drawing=off \
+                                      updates=on \
+                                      script="$PLUGIN_DIR/aerospace.sh" \
+               --subscribe space_controller aerospace_workspace_change \
+                                            front_app_switched \
+                                            display_change \
+                                            system_woke
 
-        # Disk (commented out as before)
-        #sketchybar --add item disk right \
-        #  --set disk icon="$DISK" update_freq=60 script="$PLUGIN_DIR/stats/scripts/disk.sh"
+    ##### Left: front app #####
+    sketchybar --add item front_app left \
+               --set front_app icon.font="${appFont}:Regular:15.0" \
+                               icon.color=$COLOR_BLUE \
+                               icon.y_offset=-1 \
+                               label.color=$COLOR_TEXT \
+                               script="$PLUGIN_DIR/front_app.sh" \
+               --subscribe front_app front_app_switched
 
-        # Network UP and Down
-        sketchybar --add item right_items.network.down right \
-          --set right_items.network.down y_offset=-7 label.font="$FONT:Heavy:14" icon="$NETWORK_DOWN" icon.font="$NERD_FONT:Bold:18.0" icon.highlight_color="$BLUE" update_freq=1 script="$PLUGIN_DIR/stats/scripts/network.sh" \
-          --add item right_items.network.up right \
-          --set right_items.network.up background.padding_right=-65 y_offset=7 label.font="$FONT:Heavy:14" icon="$NETWORK_UP" icon.font="$NERD_FONT:Bold:18.0" icon.highlight_color="$BLUE" update_freq=1 script="$PLUGIN_DIR/stats/scripts/network.sh"
+    ##### Right: clock #####
+    sketchybar --add item clock right \
+               --set clock icon="$ICON_CLOCK" \
+                           icon.color=$COLOR_BLUE \
+                           update_freq=20 \
+                           script="$PLUGIN_DIR/clock.sh" \
+                           click_script="open -a Calendar"
 
-        # Network Ping
-        sketchybar --add item right_items.network_ping right \
-          --set right_items.network_ping icon="$ICON_CIRCLE" update_freq=10 script="$PLUGIN_DIR/stats/scripts/ping.sh"
+    ##### Right: status (battery, volume, wifi) #####
+    sketchybar --add item battery right \
+               --set battery update_freq=120 \
+                             background.drawing=off \
+                             script="$PLUGIN_DIR/battery.sh" \
+               --subscribe battery system_woke power_source_change
 
-        sketchybar 	--add event 				hide_stats   					                                      \
-                    --add event 				show_stats 					                                        \
-                    --add event 				toggle_stats 					                                      \
-                                                                                                    \
-                    --add item         	right_items.animator right                									\
-                    --set right_items.animator     	drawing=off                  									  \
-                                        updates=on                   									              \
-                                        script="$PLUGIN_DIR/toggle_stats.sh"                        \
-                    --subscribe        	right_items.animator hide_stats show_stats toggle_stats
+    sketchybar --add item volume right \
+               --set volume background.drawing=off \
+                            script="$PLUGIN_DIR/volume.sh" \
+                            click_script="/usr/bin/osascript -e 'set volume output muted not (output muted of (get volume settings))' && $PLUGIN_DIR/volume.sh" \
+               --subscribe volume volume_change
 
-      }
+    sketchybar --add item wifi right \
+               --set wifi update_freq=2 \
+                          background.drawing=off \
+                          script="$PLUGIN_DIR/wifi.sh" \
+                          click_script="open x-apple.systempreferences:com.apple.wifi-settings-extension" \
+               --subscribe wifi wifi_change system_woke
 
-    '';
-    executable = true;
-  };
+    sketchybar --add bracket status wifi volume battery \
+               --set status background.color=$COLOR_PILL \
+                            background.border_color=$COLOR_SURFACE1 \
+                            background.border_width=1 \
+                            background.corner_radius=10 \
+                            background.height=28
 
-  # Colors configuration
-  home.file.".config/sketchybar/plugins/assets/colors.sh" = {
-    text = ''
-      #!/usr/bin/env bash
-      # Color Palette (from nix-colors)
-      export COLOR_BACKGROUND=${color_background}
-      export COLOR_FOREGROUND=${color_foreground}
-      export COLOR_FONT=${color_font}
-      export COLOR_BORDER=${color_border}
-      export COLOR_RED=${color_red}
-      export COLOR_GREEN=${color_green}
-      export COLOR_BLUE=${color_blue}
-      export COLOR_YELLOW=${color_yellow}
-      export COLOR_ORANGE=${color_orange}
-      export COLOR_PURPLE=${color_purple}
-      export COLOR_PINK=${color_pink}
-      export COLOR_TEAL=${color_teal}
-    '';
-    executable = true;
-  };
+    ##### Right: stats (cpu, ram) #####
+    sketchybar --add item ram right \
+               --set ram icon="$ICON_RAM" \
+                         update_freq=10 \
+                         background.drawing=off \
+                         script="$PLUGIN_DIR/ram.sh"
 
-  # Icons configuration
-  home.file.".config/sketchybar/plugins/assets/icons.sh" = {
-    text = ''
-      #!/usr/bin/env bash
+    sketchybar --add item cpu right \
+               --set cpu icon="$ICON_CPU" \
+                         update_freq=5 \
+                         background.drawing=off \
+                         script="$PLUGIN_DIR/cpu.sh" \
+                         click_script="open -a 'Activity Monitor'"
 
-      export BATTERY=
-      export CPU=
-      export DISK=󰋊
-      export MEMORY=﬙
-      export NETWORK=
-      export NETWORK_DOWN=
-      export NETWORK_UP=
+    sketchybar --add bracket stats cpu ram \
+               --set stats background.color=$COLOR_PILL \
+                           background.border_color=$COLOR_SURFACE1 \
+                           background.border_width=1 \
+                           background.corner_radius=10 \
+                           background.height=28
 
-      # Material Design Icons
+    ##### Right: now playing #####
+    sketchybar --add item media right \
+               --set media drawing=off \
+                           icon="$ICON_MUSIC" \
+                           icon.color=$COLOR_FLAMINGO \
+                           label.max_chars=32 \
+                           scroll_texts=on \
+                           update_freq=5 \
+                           script="$PLUGIN_DIR/media.sh" \
+                           click_script="$PLUGIN_DIR/media.sh toggle"
 
-      export ICON_CMD=󰘳
-      export ICON_COG=󰒓 # system settings, system information, tinkertool
-      export ICON_CHART=󱕍 # activity monitor, btop
-      export ICON_LOCK=󰌾
+    ##### Initial render #####
+    sketchybar --update
+  '';
 
-      export ICONS_SPACE=(󰎤 󰎧 󰎪 󰎭 󰎱 󰎳 󰎶 󰎹 󰎼)
+  home.file.".config/sketchybar/plugins/assets/colors.sh" = mkScript colorsSh;
+  home.file.".config/sketchybar/plugins/assets/icons.sh" = mkScript iconsSh;
 
-      export ICON_APP=󰣆 # fallback ap
-      export ICON_TERM=󰆍 # fallback terminal app, terminal, warp, iterm2
-      export ICON_PACKAGE=󰏓 # brew
-      export ICON_DEV=󰅨 # nvim, xcode, vscode
-      export ICON_FILE=󰉋 # ranger, finder
-      export ICON_GIT=󰊢 # lazygit
-      export ICON_LIST=󱃔 # taskwarrior, taskwarrior-tui, reminders, onenote
-      export ICON_SCREENSAVOR=󱄄 # unimatrix, pipe.sh
+  # Refresh every AeroSpace workspace item in one batched sketchybar call
+  home.file.".config/sketchybar/plugins/aerospace.sh" = mkScript ''
+    #!/usr/bin/env bash
+    source "${pluginDir}/assets/colors.sh"
+    source "${iconMap}"
 
-      export ICON_WEATHER=󰖕 # weather
-      export ICON_MAIL=󰇮 # mail, outlook
-      export ICON_CALC=󰪚 # calculator, numi
-      export ICON_MAP=󰆋 # maps, find my
-      export ICON_MICROPHONE=󰍬 # voice memos
-      export ICON_CHAT=󰍩 # messages, slack, teams, discord, telegram
-      export ICON_VIDEOCHAT=󰍫 # facetime, zoom, webex
-      export ICON_NOTE=󱞎 # notes, textedit, stickies, word, bat
-      export ICON_CAMERA=󰄀 # photo booth
-      export ICON_WEB=󰇧 # safari, beam, duckduckgo, arc, edge, chrome, firefox
-      export ICON_HOMEAUTOMATION=󱉑 # home
-      export ICON_MUSIC=󰎄 # music, spotify
-      export ICON_PODCAST=󰦔 # podcasts
-      export ICON_PLAY=󱉺 # tv, quicktime, vlc
-      export ICON_BOOK=󰂿 # books
-      export ICON_BOOKINFO=󱁯 # font book, dictionary
-      export ICON_PREVIEW=󰋲 # screenshot, preview
-      export ICON_PASSKEY=󰷡 # 1password
-      export ICON_DOWNLOAD=󱑢 # progressive downloader, transmission
-      export ICON_CAST=󱒃 # airflow
-      export ICON_TABLE=󰓫 # excel
-      export ICON_PRESENT=󰈩 # powerpoint
-      export ICON_CLOUD=󰅧 # onedrive
-      export ICON_PEN=󰏬 # curve
-      export ICON_REMOTEDESKTOP=󰢹 # vmware, utm
+    WORKSPACES="${workspaceNames}"
+    FOCUSED="$(${aerospace} list-workspaces --focused 2>/dev/null)"
+    MONITORS="$(${aerospace} list-workspaces --all --format '%{workspace} %{monitor-appkit-nsscreen-screens-id}' 2>/dev/null)"
 
-      export ICON_CLOCK=󰥔 # clock, timewarrior, tty-clock
-      export ICON_CALENDAR=󰃭 # calendar
+    args=()
+    for ws in $WORKSPACES; do
+      label=""
+      while IFS= read -r app; do
+        [ -z "$app" ] && continue
+        __icon_map "$app"
+        label+="$icon_result"
+      done < <(${aerospace} list-windows --workspace "$ws" --format '%{app-name}' 2>/dev/null | sort -u)
 
-      export ICON_WIFI=󰖩
-      export ICON_WIFI_OFF=󰖪
-      export ICON_VPN=󰦝 # vpn, nordvpn
+      display="$(awk -v ws="$ws" '$1 == ws { print $2 }' <<< "$MONITORS")"
+      [ -n "$display" ] && args+=(--set "space.$ws" display="$display")
 
-      export ICONS_VOLUME=(󰸈 󰕿 󰖀 󰕾)
-
-      export ICONS_BATTERY=(󰂎 󰁺 󰁻 󰁼 󰁽 󰁾 󰁿 󰂀 󰂁 󰂂 󰁹)
-      export ICONS_BATTERY_CHARGING=(󰢟 󰢜 󰂆 󰂇 󰂈 󰢝 󰂉 󰢞 󰂊 󰂋 󰂅)
-
-      export ICON_SWAP=󰁯
-      export ICON_RAM=󰓅
-      export ICON_DISK=󰋊 # disk utility
-      export ICON_CPU=󰘚
-
-      export ICON_DBEAVER=
-      export ICON_POSTMAN=
-
-      export ICON_CIRCLE=
-
-    '';
-    executable = true;
-  };
-
-  # Simple clock plugin
-  home.file.".config/sketchybar/plugins/clock.sh" = {
-    text = ''
-      #!/usr/bin/env bash
-
-      sketchybar --set $NAME label="$(date '+%a %d %b %H:%M')"
-    '';
-    executable = true;
-  };
-
-  # Simple battery plugin
-  home.file.".config/sketchybar/plugins/battery.sh" = {
-    text = ''
-        #!/usr/bin/env bash
-
-      source ${config.home.homeDirectory}/.config/sketchybar/plugins/assets/icons.sh
-
-      PERCENTAGE="$(pmset -g batt | grep -Eo "\d+%" | cut -d% -f1)"
-      CHARGING="$(pmset -g batt | grep 'AC Power')"
-
-      if [ -z "$PERCENTAGE" ]; then
-        exit 0
-      fi
-
-      INDEX=$(( PERCENTAGE / 10 ))
-
-      if [[ -n "$CHARGING" ]]; then
-        ICON="''${ICONS_BATTERY_CHARGING[$INDEX]}"
+      if [ "$ws" = "$FOCUSED" ]; then
+        args+=(--set "space.$ws" drawing=on \
+                                  label="$label" \
+                                  background.drawing=on \
+                                  icon.color=$COLOR_MAUVE \
+                                  label.color=$COLOR_TEXT)
+      elif [ -n "$label" ]; then
+        args+=(--set "space.$ws" drawing=on \
+                                  label="$label" \
+                                  background.drawing=off \
+                                  icon.color=$COLOR_SURFACE2 \
+                                  label.color=$COLOR_SURFACE2)
       else
-        ICON="''${ICONS_BATTERY[$INDEX]}"
+        args+=(--set "space.$ws" drawing=off)
       fi
+    done
 
+    ${sketchybar} "''${args[@]}"
+  '';
 
-      sketchybar --set "$NAME" icon="$ICON" label="''${PERCENTAGE}%"
-    '';
-    executable = true;
-  };
+  home.file.".config/sketchybar/plugins/front_app.sh" = mkScript ''
+    #!/usr/bin/env bash
+    source "${iconMap}"
 
-  # Simple volume plugin
-  home.file.".config/sketchybar/plugins/volume.sh" = {
-    text = ''
-      #!/usr/bin/env bash
+    if [ "$SENDER" = "front_app_switched" ]; then
+      __icon_map "$INFO"
+      ${sketchybar} --set "$NAME" icon="$icon_result" label="$INFO"
+    fi
+  '';
 
-      if [ "$SENDER" = "volume_change" ]; then
-        VOLUME="$INFO"
+  home.file.".config/sketchybar/plugins/clock.sh" = mkScript ''
+    #!/usr/bin/env bash
+    ${sketchybar} --set "$NAME" label="$(LC_ALL=fr_FR.UTF-8 /bin/date '+%a %d %b  %H:%M')"
+  '';
 
-        case "$VOLUME" in
-          [6-9][0-9]|100) ICON="󰕾"
-          ;;
-          [3-5][0-9]) ICON="󰖀"
-          ;;
-          [1-9]|[1-2][0-9]) ICON="󰕿"
-          ;;
-          *) ICON="󰖁"
-        esac
+  home.file.".config/sketchybar/plugins/battery.sh" = mkScript ''
+    #!/usr/bin/env bash
+    source "${pluginDir}/assets/colors.sh"
+    source "${pluginDir}/assets/icons.sh"
 
-        sketchybar --set "$NAME" icon="$ICON" label="$VOLUME%"
+    BATT="$(/usr/bin/pmset -g batt)"
+    PERCENTAGE="$(grep -Eo '[0-9]+%' <<< "$BATT" | head -1 | tr -d '%')"
+    CHARGING="$(grep 'AC Power' <<< "$BATT")"
+
+    if [ -z "$PERCENTAGE" ]; then
+      ${sketchybar} --set "$NAME" drawing=off
+      exit 0
+    fi
+
+    INDEX=$(( PERCENTAGE / 10 ))
+    COLOR=$COLOR_TEXT
+
+    if [ -n "$CHARGING" ]; then
+      ICON="''${ICONS_BATTERY_CHARGING[$INDEX]}"
+      COLOR=$COLOR_GREEN
+    else
+      ICON="''${ICONS_BATTERY[$INDEX]}"
+      if [ "$PERCENTAGE" -le 20 ]; then
+        COLOR=$COLOR_RED
+      elif [ "$PERCENTAGE" -le 40 ]; then
+        COLOR=$COLOR_PEACH
       fi
-    '';
-    executable = true;
-  };
+    fi
 
-  # Simple space plugin
-  home.file.".config/sketchybar/plugins/space.sh" = {
-    text = ''
-      #!/usr/bin/env bash
+    ${sketchybar} --set "$NAME" drawing=on icon="$ICON" icon.color="$COLOR" label="$PERCENTAGE%"
+  '';
 
-      update() {
-        if [ "$SELECTED" = "true" ]; then
-          sketchybar --set $NAME background.drawing=on \
-                               background.color=$COLOR_BLUE \
-                               label.color=$COLOR_BACKGROUND \
-                               icon.color=$COLOR_BACKGROUND
+  home.file.".config/sketchybar/plugins/volume.sh" = mkScript ''
+    #!/usr/bin/env bash
+    source "${pluginDir}/assets/colors.sh"
+    source "${pluginDir}/assets/icons.sh"
+
+    if [ "$SENDER" = "volume_change" ]; then
+      VOLUME="$INFO"
+    else
+      VOLUME="$(/usr/bin/osascript -e 'output volume of (get volume settings)')"
+    fi
+    MUTED="$(/usr/bin/osascript -e 'output muted of (get volume settings)')"
+
+    COLOR=$COLOR_TEXT
+    if [ "$MUTED" = "true" ] || [ "$VOLUME" -eq 0 ]; then
+      ICON="''${ICONS_VOLUME[0]}"
+      COLOR=$COLOR_SURFACE2
+    elif [ "$VOLUME" -lt 34 ]; then
+      ICON="''${ICONS_VOLUME[1]}"
+    elif [ "$VOLUME" -lt 67 ]; then
+      ICON="''${ICONS_VOLUME[2]}"
+    else
+      ICON="''${ICONS_VOLUME[3]}"
+    fi
+
+    ${sketchybar} --set volume icon="$ICON" icon.color="$COLOR" label.color="$COLOR" label="$VOLUME%"
+  '';
+
+  home.file.".config/sketchybar/plugins/wifi.sh" = mkScript ''
+    #!/usr/bin/env bash
+    source "${pluginDir}/assets/colors.sh"
+    source "${pluginDir}/assets/icons.sh"
+
+    IFACE=en0
+    STATE="/tmp/sketchybar_wifi_$IFACE.state"
+
+    # macOS 26 hides the SSID ("<redacted>") from processes without Location
+    # permission, so the label shows live throughput instead. An SSID line
+    # (even redacted) means the interface is associated; none means Wi-Fi is off.
+    SSID="$(/usr/sbin/ipconfig getsummary "$IFACE" 2>/dev/null | awk -F' : ' '/^  SSID +:/ { print $2 }')"
+
+    if [ -z "$SSID" ]; then
+      rm -f "$STATE"
+      ${sketchybar} --set "$NAME" icon="$ICON_WIFI_OFF" icon.color=$COLOR_RED label.drawing=off
+      exit 0
+    fi
+
+    # Cumulative bytes on the link-layer row of netstat
+    read -r RX TX < <(/usr/sbin/netstat -ibn -I "$IFACE" | awk '/<Link#/ { print $7, $10; exit }')
+    NOW=$(date +%s)
+
+    RX_RATE=0; TX_RATE=0
+    if [ -f "$STATE" ]; then
+      read -r P_RX P_TX P_NOW < "$STATE"
+      DT=$(( NOW - P_NOW ))
+      if [ "$DT" -gt 0 ] && [ "$RX" -ge "$P_RX" ] && [ "$TX" -ge "$P_TX" ]; then
+        RX_RATE=$(( (RX - P_RX) / DT ))
+        TX_RATE=$(( (TX - P_TX) / DT ))
+      fi
+    fi
+    echo "$RX $TX $NOW" > "$STATE"
+
+    fmt() {
+      # bytes/s -> compact human-readable, fixed width to avoid label jitter
+      awk -v b="$1" 'BEGIN {
+        if (b >= 1048576)   printf "%5.1fM", b / 1048576;
+        else if (b >= 1024) printf "%5.0fK", b / 1024;
+        else                printf "%5.0fB", b;
+      }'
+    }
+
+    ${sketchybar} --set "$NAME" icon="$ICON_WIFI" icon.color=$COLOR_TEAL \
+                                label.drawing=on \
+                                label="↓$(fmt "$RX_RATE") ↑$(fmt "$TX_RATE")"
+  '';
+
+  home.file.".config/sketchybar/plugins/cpu.sh" = mkScript ''
+    #!/usr/bin/env bash
+    source "${pluginDir}/assets/colors.sh"
+
+    CPU_LINE="$(/usr/bin/top -l 2 -n 0 | grep -E '^CPU' | tail -1)"
+    USER="$(awk '{ print $3 }' <<< "$CPU_LINE" | tr -d '%')"
+    SYS="$(awk '{ print $5 }' <<< "$CPU_LINE" | tr -d '%')"
+    USAGE="$(awk -v u="''${USER:-0}" -v s="''${SYS:-0}" 'BEGIN { printf "%.0f", u + s }')"
+
+    COLOR=$COLOR_GREEN
+    if [ "$USAGE" -ge 80 ]; then
+      COLOR=$COLOR_RED
+    elif [ "$USAGE" -ge 50 ]; then
+      COLOR=$COLOR_YELLOW
+    fi
+
+    ${sketchybar} --set "$NAME" icon.color="$COLOR" label="$USAGE%"
+  '';
+
+  home.file.".config/sketchybar/plugins/ram.sh" = mkScript ''
+    #!/usr/bin/env bash
+    source "${pluginDir}/assets/colors.sh"
+
+    FREE="$(/usr/bin/memory_pressure 2>/dev/null | awk '/System-wide memory free percentage/ { print $5 }' | tr -d '%')"
+    USED=$(( 100 - ''${FREE:-0} ))
+
+    COLOR=$COLOR_GREEN
+    if [ "$USED" -ge 80 ]; then
+      COLOR=$COLOR_RED
+    elif [ "$USED" -ge 50 ]; then
+      COLOR=$COLOR_YELLOW
+    fi
+
+    ${sketchybar} --set "$NAME" icon.color="$COLOR" label="$USED%"
+  '';
+
+  # Now playing (Spotify first, then Apple Music). Polled: the native
+  # media_change event is broken since macOS 15.4.
+  home.file.".config/sketchybar/plugins/media.sh" = mkScript ''
+    #!/usr/bin/env bash
+    source "${pluginDir}/assets/colors.sh"
+    source "${pluginDir}/assets/icons.sh"
+
+    running() {
+      /usr/bin/osascript -e "tell application \"System Events\" to (name of processes) contains \"$1\"" 2>/dev/null
+    }
+
+    PLAYER=""
+    if [ "$(running Spotify)" = "true" ]; then
+      PLAYER="Spotify"
+    elif [ "$(running Music)" = "true" ]; then
+      PLAYER="Music"
+    fi
+
+    if [ -z "$PLAYER" ]; then
+      ${sketchybar} --set media drawing=off
+      exit 0
+    fi
+
+    if [ "$1" = "toggle" ]; then
+      /usr/bin/osascript -e "tell application \"$PLAYER\" to playpause" 2>/dev/null
+      sleep 0.2
+    fi
+
+    STATE="$(/usr/bin/osascript -e "tell application \"$PLAYER\" to player state as string" 2>/dev/null)"
+
+    case "$STATE" in
+      playing|paused)
+        TRACK="$(/usr/bin/osascript -e "tell application \"$PLAYER\" to name of current track" 2>/dev/null)"
+        ARTIST="$(/usr/bin/osascript -e "tell application \"$PLAYER\" to artist of current track" 2>/dev/null)"
+        LABEL="$TRACK"
+        [ -n "$ARTIST" ] && LABEL="$TRACK – $ARTIST"
+        if [ "$STATE" = "playing" ]; then
+          ${sketchybar} --set media drawing=on icon="$ICON_MUSIC" icon.color=$COLOR_FLAMINGO label.color=$COLOR_TEXT label="$LABEL"
         else
-          sketchybar --set $NAME background.drawing=off \
-                               label.color=$COLOR_FONT \
-                               icon.color=$COLOR_FONT
+          ${sketchybar} --set media drawing=on icon="$ICON_PAUSE" icon.color=$COLOR_SURFACE2 label.color=$COLOR_SURFACE2 label="$LABEL"
         fi
-      }
-
-      case "$SENDER" in
-        "routine"|"forced") update
         ;;
-      esac
-    '';
-    executable = true;
-  };
-
-  # --- Additional Sketchybar files from env ---
-
-  home.file.".config/sketchybar/plugins/app_space.sh" = {
-    text = ''
-      #!/usr/bin/env bash
-      # Define the plugin directory with absolute path
-      PLUGIN_DIR="${config.home.homeDirectory}/.config/sketchybar/plugins"
-      source "$PLUGIN_DIR/assets/icons.sh"
-      source "$PLUGIN_DIR/assets/app_icons.sh"
-
-      get_notifications() {
-        local app_name="$1"
-        local count=0
-        # Special case for Slack: Read the Dock badge using AppleScript
-        if [[ "$app_name" == "Slack" ]]; then
-          count=$(yabai -m query --windows | jq -r '.[] | select(.app == "Slack") | .title' | grep -oE '([0-9]+) new item' | grep -oE '[0-9]+' || echo "0")
-        else
-          # For other apps, use lsappinfo to get the notification count
-          count=$(lsappinfo info -only Notifications "$app_name" 2>/dev/null | grep -Eo '"badgeCount"=[0-9]+' | cut -d= -f2)
-        fi
-        # Return 0 if count is empty
-        echo "''${count:-0}"
-      }
-
-      # The $SELECTED variable is available for space components and indicates if
-      # the space invoking this script (with name: $NAME) is currently selected:
-      # https://felixkratz.github.io/SketchyBar/config/components#space----associate-mission-control-spaces-with-an-item
-
-      sketchybar --set $NAME background.drawing=$SELECTED \
-      	icon.highlight=$SELECTED \
-      	label.highlight=$SELECTED
-
-      if [[ $SENDER == "front_app_switched" || $SENDER == "window_change" ]];
-      then
-       for i in "''${!ICONS_SPACE[@]}"
-       do
-         sid=$(($i+1))
-         LABEL=""
-         QUERY=$(yabai -m query --windows --space $sid)
-         APPS=$(echo $QUERY | jq '.[].app')
-         TITLES=$(echo $QUERY | jq '.[].title')
-         if grep -q "\"" <<< $APPS;
-         then
-           APPS_ARR=()
-           while read -r line; do APPS_ARR+=("$line"); done <<< "$APPS"
-           TITLES_ARR=()
-           while read -r line; do TITLES_ARR+=("$line"); done <<< "$TITLES"
-           LENGTH=''${#APPS_ARR[@]}
-           for j in "''${!APPS_ARR[@]}"
-           do
-             APP=$(echo ''${APPS_ARR[j]} | sed 's/"//g')
-             TITLE=$(echo ''${TITLES_ARR[j]} | sed 's/"//g')
-              if [[ -z "$TITLE" ]]; then
-                continue
-              fi
-             ICON=$(get_icon "$APP" "$TITLE")
-             NOTIF_COUNT=$(get_notifications "$APP")
-              if [[ "$NOTIF_COUNT" -gt 0 ]]; then
-                ICON+=" ($NOTIF_COUNT)"
-              fi
-             LABEL+="$ICON"
-             if [[ $j < $(($LENGTH-1)) ]]; then
-               LABEL+=" "
-             fi
-           done
-         else
-           LABEL+="_"
-         fi
-         sketchybar --set space.$sid label="$LABEL"
-       done
-      fi
-    '';
-    executable = true;
-  };
-
-  home.file.".config/sketchybar/plugins/front_app.sh" = {
-    text = ''
-      #!/bin/sh
-
-      # Some events send additional information specific to the event in the $INFO
-      # variable. E.g. the front_app_switched event sends the name of the newly
-      # focused application in the $INFO variable:
-      # https://felixkratz.github.io/SketchyBar/config/events#events-and-scripting
-
-      if [ "$SENDER" = "front_app_switched" ]; then
-        sketchybar --set "$NAME" label="$INFO"
-      fi
-    '';
-    executable = true;
-  };
-
-  home.file.".config/sketchybar/plugins/toggle_stats.sh" = {
-    text = ''
-      #!/usr/bin/env bash
-
-      stats="cpu.percent memory disk network"
-
-      hide_stats() {
-          args=()
-          for item in $stats; do
-              args+=(--set "$item" drawing=off)
-          done
-
-          sketchybar "$item" \
-              --set separator_right \
-              icon=
-      }
-
-      show_stats() {
-          args=()
-          for item in $stats; do
-              args+=(--set "$item" drawing=on)
-          done
-
-          sketchybar "$item" \
-              --set separator_right \
-              icon=
-      }
-
-      toggle_stats() {
-          state=$(sketchybar --query separator_right | jq -r .icon.value)
-
-          case $state in
-          "")
-              show_stats
-              ;;
-          "")
-              hide_stats
-              ;;
-          esac
-      }
-    '';
-    executable = true;
-  };
-
-  home.file.".config/sketchybar/plugins/assets/app_icons.sh" = {
-    text = ''
-            #!/usr/bin/env bash
-
-            source "${config.home.homeDirectory}/.config/sketchybar/plugins/assets/icons.sh"
-
-            get_icon() {
-        local app_name="$1"
-        local window_title="$2"
-
-        case "$app_name" in
-          "Terminal" | "Warp" | "iTerm2")
-            local icon="$ICON_TERM"
-            [[ "$window_title" =~ "btop" ]] && icon="$ICON_CHART"
-            [[ "$window_title" =~ "brew" ]] && icon="$ICON_PACKAGE"
-            [[ "$window_title" =~ "nvim" ]] && icon="$ICON_DEV"
-            [[ "$window_title" =~ "ranger" ]] && icon="$ICON_FILE"
-            [[ "$window_title" =~ "lazygit" ]] && icon="$ICON_GIT"
-            [[ "$window_title" =~ "taskwarrior-tui" ]] && icon="$ICON_LIST"
-            [[ "$window_title" =~ "unimatrix|pipes.sh" ]] && icon="$ICON_SCREENSAVOR"
-            [[ "$window_title" =~ "bat" ]] && icon="$ICON_NOTE"
-            [[ "$window_title" =~ "tty-clock" ]] && icon="$ICON_CLOCK"
-            echo "$icon"
-            return
-            ;;
-          "Finder") echo "$ICON_FILE" ;;
-          "Weather") echo "$ICON_WEATHER" ;;
-          "Clock") echo "$ICON_CLOCK" ;;
-          "Mail" | "Microsoft Outlook") echo "$ICON_MAIL" ;;
-          "Calendar") echo "$ICON_CALENDAR" ;;
-          "Calculator" | "Numi") echo "$ICON_CALC" ;;
-          "Maps" | "Find My") echo "$ICON_MAP" ;;
-          "Voice Memos") echo "$ICON_MICROPHONE" ;;
-          "Messages" | "Slack" | "Microsoft Teams" | "Discord" | "Telegram") echo "$ICON_CHAT" ;;
-          "FaceTime" | "zoom.us" | "Webex" | "OBS Studio") echo "$ICON_VIDEOCHAT" ;;
-          "Notes" | "TextEdit" | "Stickies" | "Microsoft Word" | "Linear") echo "$ICON_NOTE" ;;
-          "Reminders" | "Microsoft OneNote") echo "$ICON_LIST" ;;
-          "Photo Booth") echo "$ICON_CAMERA" ;;
-          "Safari" | "Beam" | "DuckDuckGo" | "Arc" | "Microsoft Edge" | "Google Chrome" | "Firefox") echo "$ICON_WEB" ;;
-          "System Settings" | "System Information" | "TinkerTool") echo "$ICON_COG" ;;
-          "HOME") echo "$ICON_HOMEAUTOMATION" ;;
-          "Music" | "Spotify") echo "$ICON_MUSIC" ;;
-          "Podcasts") echo "$ICON_PODCAST" ;;
-          "TV" | "QuickTime Player" | "VLC") echo "$ICON_PLAY" ;;
-          "Books") echo "$ICON_BOOK" ;;
-          "Xcode" | "Code" | "GoLand" | "Cursor") echo "$ICON_DEV" ;;
-          "Font Book" | "Dictionary") echo "$ICON_BOOKINFO" ;;
-          "Activity Monitor") echo "$ICON_CHART" ;;
-          "Disk Utility") echo "$ICON_DISK" ;;
-          "Screenshot" | "Preview") echo "$ICON_PREVIEW" ;;
-          "1Password") echo "$ICON_PASSKEY" ;;
-          "NordVPN") echo "$ICON_VPN" ;;
-          "Progressive Downloaded" | "Transmission") echo "$ICON_DOWNLOAD" ;;
-          "Airflow") echo "$ICON_CAST" ;;
-          "Microsoft Excel") echo "$ICON_TABLE" ;;
-          "Microsoft PowerPoint") echo "$ICON_PRESENT" ;;
-          "OneDrive") echo "$ICON_CLOUD" ;;
-          "Curve") echo "$ICON_PEN" ;;
-          "DBeaver") echo "$ICON_DBEAVER" ;;
-          "Postman") echo "$ICON_POSTMAN" ;;
-          "VMware Fusion" | "UTM") echo "$ICON_REMOTEDESKTOP" ;;
-          *) echo "$ICON_APP" ;;
-        esac
-      }
-    '';
-    executable = true;
-  };
-
-  home.file.".config/sketchybar/plugins/stats/scripts/cpu.sh" = {
-    text = ''
-      #!/usr/bin/env bash
-      #$PLUGIN_DIR/stats/scripts/cpu.sh
-
-      # Get CPU usage (user + sys) in percent, fallback to 0 if not found
-      CPU_LINE=$(top -l 2 | grep -E "^CPU" | tail -1)
-      USER=$(echo "$CPU_LINE" | awk '{print $3}' | tr -d '%us,')
-      SYS=$(echo "$CPU_LINE" | awk '{print $5}' | tr -d '%sy,')
-      if [ -z "$USER" ]; then USER=0; fi
-      if [ -z "$SYS" ]; then SYS=0; fi
-      USER_INT=$(printf '%.0f' "$USER")
-      SYS_INT=$(printf '%.0f' "$SYS")
-      CPU_USAGE=$((USER_INT + SYS_INT))
-      sketchybar -m --set "$NAME" label="$CPU_USAGE%"
-    '';
-    executable = true;
-  };
-
-  home.file.".config/sketchybar/plugins/stats/scripts/disk.sh" = {
-    text = ''
-      #!/usr/bin/env bash
-      #disk.sh
-
-      sketchybar -m --set "$NAME" label="$(df -H | grep -E '^(/dev/disk3s5).' | awk '{ printf (\"%s\\n\", $5) }')"
-    '';
-    executable = true;
-  };
-
-  home.file.".config/sketchybar/plugins/stats/scripts/network.sh" = {
-    text = ''
-        #!/usr/bin/env bash
-
-      UPDOWN=$(ifstat -i "en0" -b 0.1 1 | tail -n1)
-      DOWN=$(echo "$UPDOWN" | awk "{ print \$1 }" | cut -f1 -d ".")
-      UP=$(echo "$UPDOWN" | awk "{ print \$2 }" | cut -f1 -d ".")
-
-      DOWN_FORMAT=""
-      if [ "$DOWN" -gt "999" ]; then
-      	DOWN_FORMAT=$(echo "$DOWN" | awk '{ printf "%03.0f Mbps", $1 / 1000}')
-      else
-      	DOWN_FORMAT=$(echo "$DOWN" | awk '{ printf "%03.0f kbps", $1}')
-      fi
-
-      UP_FORMAT=""
-      if [ "$UP" -gt "999" ]; then
-      	UP_FORMAT=$(echo "$UP" | awk '{ printf "%03.0f Mbps", $1 / 1000}')
-      else
-      	UP_FORMAT=$(echo "$UP" | awk '{ printf "%03.0f kbps", $1}')
-      fi
-
-      sketchybar -m --set right_items.network.down label="$DOWN_FORMAT" \
-      --set right_items.network.up label="$UP_FORMAT"
-    '';
-    executable = true;
-  };
-
-  home.file.".config/sketchybar/plugins/stats/scripts/ping.sh" = {
-    text = ''
-      #!/usr/bin/env bash
-
-      source ${config.home.homeDirectory}/.config/sketchybar/plugins/assets/icons.sh
-      source ${config.home.homeDirectory}/.config/sketchybar/plugins/assets/colors.sh
-
-      PING=$(ping -c 1 google.com | awk -F'=' '/time=/{print int($NF)}')
-      COLOR=$COLOR_FONT
-
-      if [ $PING -lt 1 ]; then
-        PING=$ICON_WIFI_OFF
-        COLOR=$COLOR_RED_BRIGHT
-      fi
-
-      if [ $PING -gt 50 ]; then
-        COLOR=$COLOR_YELLOW_BRIGHT
-      fi
-
-      if [ $PING -gt 100 ]; then
-        COLOR=$COLOR_RED_BRIGHT
-      fi
-
-
-      sketchybar --set right_items.network_ping icon.color="$COLOR" label.color="$COLOR" label="''${PING}ms"
-    '';
-    executable = true;
-  };
-
-  home.file.".config/sketchybar/plugins/stats/scripts/ram.sh" = {
-    text = ''
-      #!/usr/bin/env bash
-      #ram.sh
-
-      # Get free memory percent, fallback to 0 if not found
-      FREE=$(memory_pressure 2>/dev/null | grep "System-wide memory free percentage:" | awk '{print $5}' | tr -d '%')
-      if [ -z "$FREE" ]; then FREE=0; fi
-      USED=$((100 - FREE))
-      sketchybar -m --set "$NAME" label="$USED%"
-    '';
-    executable = true;
-  };
+      *)
+        ${sketchybar} --set media drawing=off
+        ;;
+    esac
+  '';
 }

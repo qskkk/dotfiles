@@ -93,7 +93,8 @@ in
 
   fonts.packages =
     with pkgs;
-    [ ] ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
+    [ sketchybar-app-font ]
+    ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
 
   home-manager.useUserPackages = true;
   home-manager.useGlobalPkgs = true;
