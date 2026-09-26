@@ -32,7 +32,7 @@ in
   # Home Manager configuration
   home = {
     username = username;
-    homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
+    homeDirectory = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${username}" else "/home/${username}";
     stateVersion = "23.11";
 
     # Create npm global directory structure
@@ -67,7 +67,7 @@ in
       devenv
       terraform
 
-    ] ++ lib.optionals pkgs.stdenv.isDarwin [
+    ] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
       sketchybar
       karabiner-elements
       aerospace
@@ -88,9 +88,9 @@ in
       hyperfine # Window management dependencies
       jq
       jankyborders
-    ]) ++ lib.optionals pkgs.stdenv.isDarwin [
+    ]) ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
       git-fleet.packages.aarch64-darwin.default
-    ] ++ lib.optionals pkgs.stdenv.isLinux [
+    ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       git-fleet.packages.x86_64-linux.default
     ] ++ (with pkgs; [
 
@@ -115,7 +115,7 @@ in
 
       # Language servers for development
       nil # Nix LSP
-      nixfmt-rfc-style # Nix formatter
+      nixfmt # Nix formatter
       typescript-language-server
       vscode-langservers-extracted
       python3Packages.python-lsp-server
@@ -135,7 +135,7 @@ in
       "$HOME/dev/flutter/bin"
       "$HOME/.pub-cache/bin"
       "$HOME/.local/bin"
-    ] ++ lib.optionals pkgs.stdenv.isDarwin [
+    ] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
       "/usr/local/bin"
       "/opt/homebrew/bin"
       "/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
@@ -145,8 +145,8 @@ in
     # Environment variables
     sessionVariables = {
       EDITOR = "hx";
-      BROWSER = if pkgs.stdenv.isDarwin then "arc" else "firefox";
-      TERMINAL = if pkgs.stdenv.isDarwin then "kitty" else "alacritty";
+      BROWSER = if pkgs.stdenv.hostPlatform.isDarwin then "arc" else "firefox";
+      TERMINAL = if pkgs.stdenv.hostPlatform.isDarwin then "kitty" else "alacritty";
       GOPATH = "$HOME/go";
       GOBIN = "$HOME/go/bin";
       NPM_CONFIG_PREFIX = "$HOME/.npm-global";
@@ -159,9 +159,9 @@ in
   # XDG directories
   xdg = {
     enable = true;
-    configHome = if pkgs.stdenv.isDarwin then "/Users/${username}/.config" else "/home/${username}/.config";
-    dataHome = if pkgs.stdenv.isDarwin then "/Users/${username}/.local/share" else "/home/${username}/.local/share";
-    cacheHome = if pkgs.stdenv.isDarwin then "/Users/${username}/.cache" else "/home/${username}/.cache";
+    configHome = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${username}/.config" else "/home/${username}/.config";
+    dataHome = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${username}/.local/share" else "/home/${username}/.local/share";
+    cacheHome = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${username}/.cache" else "/home/${username}/.cache";
   };
 
   # Direnv integration
@@ -172,7 +172,7 @@ in
   };
 
   # macOS-specific activation scripts
-  home.activation = lib.mkIf pkgs.stdenv.isDarwin {
+  home.activation = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
     # Activation script to restart SketchyBar after rebuild
     restartSketchyBar = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       echo "Restarting SketchyBar..."

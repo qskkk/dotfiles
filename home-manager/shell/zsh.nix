@@ -8,6 +8,8 @@
 {
   programs.zsh = {
     enable = true;
+    # Lock in the current location; the upstream default moves to $XDG_CONFIG_HOME/zsh
+    dotDir = config.home.homeDirectory;
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
@@ -172,19 +174,19 @@
     ];
 
     # File search
-    fileWidgetCommand = "fd --type f --hidden --follow --exclude .git";
-    fileWidgetOptions = [
+    fileWidget.command = "fd --type f --hidden --follow --exclude .git";
+    fileWidget.options = [
       "--preview 'bat --color=always --style=header,grid --line-range :300 {}'"
     ];
 
     # Directory search
-    changeDirWidgetCommand = "fd --type d --hidden --follow --exclude .git";
-    changeDirWidgetOptions = [
+    changeDirWidget.command = "fd --type d --hidden --follow --exclude .git";
+    changeDirWidget.options = [
       "--preview 'tree -C {} | head -200'"
     ];
 
     # History search
-    historyWidgetOptions = [
+    historyWidget.options = [
       "--sort"
       "--exact"
     ];

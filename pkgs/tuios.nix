@@ -2,16 +2,16 @@
 
 buildGoModule rec {
   pname = "tuios";
-  version = "latest";
+  version = "0.7.0";
 
   src = fetchFromGitHub {
     owner = "Gaurav-Gosain";
     repo = "tuios";
-    rev = "main";  # or specify a specific commit/tag
-    hash = "sha256-Ra9n1LayjRnDv1BQj+DgbgZb54pn+XumBkbDd1+VCP4=";
+    rev = "v0.7.0";
+    hash = "sha256-XPcgUDlIbwp278Kc9B0aXxxIX2XnsJpFzxHDaop9cLs=";
   };
 
-  vendorHash = "sha256-kDZRT/Ua+SaxyZ6RI9ZY2tqBgQBWo755fvQVRupBsUc=";
+  vendorHash = "sha256-98XZe60gcRWyP0ApUV+qCJ0UoAExx7X0FPtFL0Tr0a4=";
 
   # Build the tuios command
   subPackages = [ "cmd/tuios" ];
